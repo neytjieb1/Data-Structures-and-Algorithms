@@ -1,0 +1,360 @@
+/home/jo/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/193.6015.39/jbr/bin/java -javaagent:/home/jo/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/193.6015.39/lib/idea_rt.jar=39085:/home/jo/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/193.6015.39/bin -Dfile.encoding=UTF-8 -classpath "/home/jo/IdeaProjects/Practical 1/out/production/Practical 1" Main
+=============================GIVEN TESTS=============================
+First key : 8
+Last key : 18
+
+Skip List Content:
+Level 0: 8 9 15 18
+Level 1: 9 15
+Level 2: 15
+Level 3:
+
+Key 10 not found
+Deleted key 18
+Deleted key 9
+Key 3 not found for deletion
+
+Skip List Content:
+Level 0: 8 10 15
+Level 1: 15
+Level 2: 15
+Level 3:
+
+First key : 8
+Last key : 15
+Found key 10
+=============================PRESTON TESTS=============================
+
+------------INTEGER SKIP LIST------------
+
+Skip List Content:
+Level 0:
+Level 1:
+Level 2:
+Level 3:
+
+List is empty
+List is empty
+List is empty
+
+Inserting 8
+Inserting 5
+Inserting 12
+
+Key 9 not found
+
+Inserting 18
+
+Skip List Content:
+Level 0: 5 8 12 18
+Level 1: 5 12
+Level 2: 5
+Level 3:
+
+First key : 5
+Last key : 18
+
+Found key 18
+
+Inserting 3
+
+Skip List Content:
+Level 0: 3 5 8 12 18
+Level 1: 5 12
+Level 2: 5
+Level 3:
+
+First key : 3
+Last key : 18
+
+Skip List Content:
+Level 0: 3 5 8 12 18
+Level 1: 5 12
+Level 2: 5
+Level 3:
+
+Key 10 not found
+
+Inserting 10
+
+Skip List Content:
+Level 0: 3 5 8 10 12 18
+Level 1: 5 12
+Level 2: 5
+Level 3:
+
+Found key 10
+
+------------DOUBLE SKIP LIST------------
+
+Skip List Content:
+Level 0:
+Level 1:
+Level 2:
+Level 3:
+
+Inserting 18.1
+
+Skip List Content:
+Level 0: 18.1
+Level 1:
+Level 2:
+Level 3:
+
+First key : 18.1
+Last key : 18.1
+
+Inserting 18.13
+
+Skip List Content:
+Level 0: 18.1 18.13
+Level 1: 18.13
+Level 2: 18.13
+Level 3:
+
+First key : 18.1
+Last key : 18.13
+
+Key 19.0 not found
+
+Found key 18.13
+=============================JO TESTS=============================
+Elements for insertion:
+[65, -5, 67, -12, 80, 8, -70, -85, 1, 75, -18, 23, 29, 64, -51, 22, 21, 79, -40, 37]
+First key : -85
+Last key : 80
+Key 10 not found
+
+Skip List Content:
+Level 0: -85 -70 -51 -40 -18 -12 -5 1 8 21 22 23 29 37 64 65 67 75 79 80
+Level 1: -85 -51 -40 -18 -5 29 37 64 67 79
+Level 2: -40 -5 29 37 79
+Level 3: 29 37
+
+Deleted key 37
+
+Skip List Content:
+Level 0: -85 -70 -51 -40 -18 -12 -5 1 8 21 22 23 29 64 65 67 75 79 80
+Level 1: -85 -51 -40 -18 -5 29 64 67 79
+Level 2: -40 -5 29 79
+Level 3: 29
+
+Deleted key -40
+
+Skip List Content:
+Level 0: -85 -70 -51 -18 -12 -5 1 8 21 22 23 29 64 65 67 75 79 80
+Level 1: -85 -51 -18 -5 29 64 67 79
+Level 2: -5 29 79
+Level 3: 29
+
+Deleted key 79
+
+Skip List Content:
+Level 0: -85 -70 -51 -18 -12 -5 1 8 21 22 23 29 64 65 67 75 80
+Level 1: -85 -51 -18 -5 29 64 67
+Level 2: -5 29
+Level 3: 29
+
+Deleted key 21
+
+Skip List Content:
+Level 0: -85 -70 -51 -18 -12 -5 1 8 22 23 29 64 65 67 75 80
+Level 1: -85 -51 -18 -5 29 64 67
+Level 2: -5 29
+Level 3: 29
+
+Deleted key 22
+
+Skip List Content:
+Level 0: -85 -70 -51 -18 -12 -5 1 8 23 29 64 65 67 75 80
+Level 1: -85 -51 -18 -5 29 64 67
+Level 2: -5 29
+Level 3: 29
+
+Deleted key -51
+
+Skip List Content:
+Level 0: -85 -70 -18 -12 -5 1 8 23 29 64 65 67 75 80
+Level 1: -85 -18 -5 29 64 67
+Level 2: -5 29
+Level 3: 29
+
+Deleted key 64
+
+Skip List Content:
+Level 0: -85 -70 -18 -12 -5 1 8 23 29 65 67 75 80
+Level 1: -85 -18 -5 29 67
+Level 2: -5 29
+Level 3: 29
+
+Deleted key 29
+
+Skip List Content:
+Level 0: -85 -70 -18 -12 -5 1 8 23 65 67 75 80
+Level 1: -85 -18 -5 67
+Level 2: -5
+Level 3:
+
+Deleted key 23
+
+Skip List Content:
+Level 0: -85 -70 -18 -12 -5 1 8 65 67 75 80
+Level 1: -85 -18 -5 67
+Level 2: -5
+Level 3:
+
+Deleted key -18
+
+Skip List Content:
+Level 0: -85 -70 -12 -5 1 8 65 67 75 80
+Level 1: -85 -5 67
+Level 2: -5
+Level 3:
+
+Deleted key 75
+First key : -85
+Last key : 80
+Key 10 not found
+Found key 8
+
+Skip List Content:
+Level 0: -85 -70 -12 -5 1 8 65 67 80
+Level 1: -85 -5 67
+Level 2: -5
+Level 3:
+
+Deleted key 1
+
+Skip List Content:
+Level 0: -85 -70 -12 -5 8 65 67 80
+Level 1: -85 -5 67
+Level 2: -5
+Level 3:
+
+Deleted key -85
+
+Skip List Content:
+Level 0: -70 -12 -5 8 65 67 80
+Level 1: -5 67
+Level 2: -5
+Level 3:
+
+Deleted key -70
+
+Skip List Content:
+Level 0: -12 -5 8 65 67 80
+Level 1: -5 67
+Level 2: -5
+Level 3:
+
+Deleted key 8
+
+Skip List Content:
+Level 0: -12 -5 65 67 80
+Level 1: -5 67
+Level 2: -5
+Level 3:
+
+Deleted key 80
+
+Skip List Content:
+Level 0: -12 -5 65 67
+Level 1: -5 67
+Level 2: -5
+Level 3:
+
+Deleted key -12
+
+Skip List Content:
+Level 0: -5 65 67
+Level 1: -5 67
+Level 2: -5
+Level 3:
+
+Deleted key 67
+
+Skip List Content:
+Level 0: -5 65
+Level 1: -5
+Level 2: -5
+Level 3:
+
+Deleted key -5
+
+Skip List Content:
+Level 0: 65
+Level 1:
+Level 2:
+Level 3:
+
+Deleted key 65
+
+Skip List Content:
+Level 0:
+Level 1:
+Level 2:
+Level 3:
+
+List is empty
+List is empty
+List is empty
+
+------------CHAR SKIP LIST------------
+
+Skip List Content:
+Level 0:
+Level 1:
+Level 2:
+Level 3:
+
+Inserting e
+
+Skip List Content:
+Level 0: e
+Level 1:
+Level 2:
+Level 3:
+
+First key : e
+Last key : e
+
+Inserting m
+
+Inserting a
+
+Inserting n
+
+Inserting u
+
+Skip List Content:
+Level 0: a e m n u
+Level 1: a m
+Level 2: m
+Level 3:
+
+First key : a
+Last key : u
+
+Found key e
+
+Key f not found
+
+Deleting m
+Deleted key m
+
+Deleting z
+Key z not found for deletion
+
+Deleting u
+Deleted key u
+
+Skip List Content:
+Level 0: a e n
+Level 1: a
+Level 2:
+Level 3:
+
+First key : a
+Last key : n
+
+Process finished with exit code 0

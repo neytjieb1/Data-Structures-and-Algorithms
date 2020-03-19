@@ -1,0 +1,35 @@
+10, 5, 9
+Organising List Content:
+[K: 10, D: 179]
+[K: 5, D: 61]
+[K: 9, D: 9]
+Found node [K: 5, D: 61]
+Node with key 15 not found
+Organising List Content:
+[K: 5, D: -61]
+[K: 10, D: 181]
+[K: 9, D: 9]
+Organising List Content:
+[K: 5, D: 61]
+[K: 9, D: 9]
+false
+true
+5, 2, 9, 20
+Organising List Content:
+[K: 5, D: 359]
+[K: 2, D: -179]
+[K: 9, D: 241]
+[K: 20, D: 20]
+Found node [K: 9, D: 241]
+Found node [K: 20, D: 20]
+Organising List Content:
+[K: 5, D: 339]
+[K: 9, D: -159]
+[K: 20, D: 438]
+[K: 2, D: 2]
+Organising List Content:
+[K: 5, D: -303]
+[K: 20, D: 438]
+[K: 2, D: 2]
+true
+false

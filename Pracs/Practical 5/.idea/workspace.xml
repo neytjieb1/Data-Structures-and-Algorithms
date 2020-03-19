@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="344b9d2d-2054-483b-9ba1-113ccd142fa6" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ProjectId" id="1ZFFns20J8ggGVanXGZqOAVZsWT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Prac 5" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="Prac 5" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="344b9d2d-2054-483b-9ba1-113ccd142fa6" name="Default Changelist" comment="" />
+      <created>1584427104190</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1584427104190</updated>
+      <workItem from="1584427105899" duration="17363000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="141" y="57" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584428560957">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="141" y="57" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.30.1366.738@0.30.1366.738" timestamp="1584428560957" />
+    <state x="415" y="185" width="525" height="430" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1584428557307">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="415" y="185" width="525" height="430" key="#com.intellij.ide.util.TreeClassChooserDialog/0.30.1366.738@0.30.1366.738" timestamp="1584428557307" />
+    <state width="1320" height="297" key="GridCell.Tab.0.bottom" timestamp="1584444474549">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.0.bottom/0.30.1366.738@0.30.1366.738" timestamp="1584444474549" />
+    <state width="1320" height="297" key="GridCell.Tab.0.center" timestamp="1584444474548">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.0.center/0.30.1366.738@0.30.1366.738" timestamp="1584444474548" />
+    <state width="1320" height="297" key="GridCell.Tab.0.left" timestamp="1584444474548">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.0.left/0.30.1366.738@0.30.1366.738" timestamp="1584444474548" />
+    <state width="1320" height="297" key="GridCell.Tab.0.right" timestamp="1584444474548">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.0.right/0.30.1366.738@0.30.1366.738" timestamp="1584444474548" />
+    <state width="1320" height="297" key="GridCell.Tab.1.bottom" timestamp="1584444474550">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.1.bottom/0.30.1366.738@0.30.1366.738" timestamp="1584444474550" />
+    <state width="1320" height="297" key="GridCell.Tab.1.center" timestamp="1584444474549">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.1.center/0.30.1366.738@0.30.1366.738" timestamp="1584444474549" />
+    <state width="1320" height="297" key="GridCell.Tab.1.left" timestamp="1584444474549">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.1.left/0.30.1366.738@0.30.1366.738" timestamp="1584444474549" />
+    <state width="1320" height="297" key="GridCell.Tab.1.right" timestamp="1584444474550">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state width="1320" height="297" key="GridCell.Tab.1.right/0.30.1366.738@0.30.1366.738" timestamp="1584444474550" />
+    <state x="346" y="89" width="672" height="678" key="search.everywhere.popup" timestamp="1584432791759">
+      <screen x="0" y="30" width="1366" height="738" />
+    </state>
+    <state x="346" y="89" width="672" height="678" key="search.everywhere.popup/0.30.1366.738@0.30.1366.738" timestamp="1584432791759" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="((MinHeap)this).mH[12]" custom="MinHeap" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
