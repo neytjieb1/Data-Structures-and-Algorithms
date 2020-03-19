@@ -1,4 +1,4 @@
-#Assignment 1
+# Assignment 1
 
 The relationship between sparse tables and matrices is similar to the relationship between linked lists
 and arrays. Sparse tables can be seen as linked lists in more dimensions. A sparse table need not be
