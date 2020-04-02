@@ -1,0 +1,194 @@
+//Step 3: backtrack
+      if (element.equals(-12)) {
+         System.out.println("hello");
+      }
+      prev = updateBF(newNode, prev);
+
+      if (Math.abs(prev.balanceFactor) == 2) {
+         prev = reBalance(prev);
+      }
+
+      //Step 4: Incorporate into tree
+      p = getParent(prev.data);
+      if (prev.data.compareTo(p.data) < 0) {
+         p.left = prev;
+      }
+      else {
+         p.right = prev;
+      }
+
+
+      if ( (GP.balanceFactor==2 && GP.right.balanceFactor==1) || GP.balanceFactor==-2 && GP.left.balanceFactor==-1) {
+         GP = homogeneousRotation(GP);
+      }
+      else {
+         GP = heteroRotate(GP);
+      }
+      return GP;
+
+
+if (Ch.equals(P.left)) {
+         P.balanceFactor--;
+      }
+      else {
+         P.balanceFactor++;
+      }
+      while (P!=root && Math.abs(P.balanceFactor)!=2) {
+         Ch = P;
+         P = getParent(P.data);
+         if (Ch.balanceFactor == 0) {
+            return Ch;
+         }
+         if (Ch.equals(P.left)) {
+            P.balanceFactor--;
+         }
+         else {
+            P.balanceFactor++;
+         }
+      }
+      return P;
+
+
+System.out.println("\n\nRoot: " + t1.getRoot().data + " bf: " + t1.getRoot().balanceFactor);
+      System.out.println("Left: " + t1.getRoot().left.data + " bf: " + t1.getRoot().left.balanceFactor);
+      System.out.println("Right: " + t1.getRoot().right.data+ " bf: " + t1.getRoot().right.balanceFactor);
+      t1.getRoot().right =  t1.rightRot(t1.getRoot().right);
+      System.out.println("Root: " + t1.getRoot().data + " bf: " + t1.getRoot().balanceFactor);
+      System.out.println("Left: " + t1.getRoot().left.data + " bf: " + t1.getRoot().left.balanceFactor);
+      System.out.println("Right: " + t1.getRoot().right.data+ " bf: " + t1.getRoot().right.balanceFactor);
+
+
+
+==================================CONTAINS==================================
+1. findElement
+    - p.229
+
+===================================INSERT===================================
+1. Find space
+    - if contains element
+        + return false
+    - else
+        + justInsertElement
+
+2. justInsertElement
+    - if empty
+        + insert easily
+        + return true
+    - if non-empty
+        + insert
+        + update BF's & assign to specific node
+        + reBalance if necessary
+
+3. update BF's
+    -   Q = newNode
+        P = prev
+        if (P.left.el.equals(Q.el))  //or elements equal
+            P.bf--;
+        else
+            P.bf++;
+
+        while (P!=root && Math.abs(P.bf)!=2)
+            Q = P
+            P = getParent(P)
+            if (Q.bf == 0)
+                return
+            if (P.left == Q)       //or elements equal
+                P.bf--;
+            else
+                P.bf++;
+
+4. reBalance
+    -   GP = badBFNode
+        case1: Rch_of_Rsbtr || Lch_of_Lsbtr
+            homogeneous rotate
+        case2: Lch_of_Rsbtr || Rch_of_Lsbtr
+            heterogeneous rotate
+    - return node
+
+===================================HELPERS==================================
+1. Get Parent(el)
+    -   Node c = root
+        Node p = null
+        while (c!=null)
+            if (el.equals(c.el))
+                return p
+            else if (el.compareTo(c.el) < 0)
+                p = c
+                c = c.left
+            else
+                p = c
+                c = c.right
+        throw new ArithmeticException("Insertion didn't work because we can't find the parent of the inserted node"
+
+2. rightRot(P)          //right rotate about P
+    - Ch = P.left
+    - P.left = Ch.right
+      C.right = P
+
+3. leftRot(P)
+    - Ch = P.right
+    - P.right = Ch.left
+      Ch.left = P
+
+4. homRotate(GP, P, Ch)
+    - if (GP.bf==2)
+        leftRot(about GP)
+        recalculate: gp.bf = h(r) - h(l)
+        recalculate: p.bf = h(r)-h(l)
+    - else
+        rightRot(about GP)
+
+5. hetRotate(GP, P, Ch)
+    - if (GP.bf==2)
+        leftRot(about P)
+        rightRot(about GP)
+    - else
+        rightRot(about P)
+        leftRot(about GP)
+
+
+//             System.out.println("Deleted: " + val);
+//             System.out.println("Size: " + t2.getNumberOfNodes());
+//             System.out.println(isValidAVL(t2.getRoot()));
+//             //t2.myOwnPreOrder(t2.getRoot());
+             //System.out.println("");
+
+
+
+       /*
+       while (parent!=null) {
+          calculateUpdatedBF(parent);
+          if (Math.abs(parent.bf)==2) {
+             get GP
+             parent = rebalDelete(parent)
+             link parent into list
+          parent = getParent(parent.data)
+       }
+        */
+
+ /*
+       calculateUpdatedBF(parent);
+       //Rebalance to root
+       while (parent!=null) {
+          ThreadedAVLNode<T> GP = getParent(parent.data); //should be null if parent == root
+          //Determine: L/R child
+          boolean leftChild = false;
+          if (GP!=null) leftChild =  parent.equals(GP.left);
+          //Unbalanced ?
+          if (Math.abs(parent.balanceFactor) == 2) {
+             parent = rebalDelete(parent);
+             calculateUpdatedBF(parent);
+             if (GP==null) {
+                root = parent;
+             }
+             else if (leftChild) {
+                GP.left = parent;
+             }
+             else {
+                GP.right = parent;
+             }
+          }
+          parent = GP;
+          calculateUpdatedBF(parent);
+       }
+ */

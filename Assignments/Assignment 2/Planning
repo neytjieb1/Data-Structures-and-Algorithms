@@ -1,0 +1,42 @@
+===================================DELETE===================================
+0. Check empty/absent
+
+1. Delete by Copying
+    - p.254
+
+2. Update Balance Factors up to root
+    - updateBF(parent)
+      parent = getParent(parent)
+    - while (parent != root)
+        updateBF(parent)
+        if ( Math.abs(parent.bf)==2 )
+            parent = rebalDelete(parent)
+        parent = getParent(parent)
+    - root = rebalDelete(parent)
+
+3. Rebalance
+
+    #1: Left branch delete + right==+1 --> root==2 --> 1 Left rotation
+    #2: (Right branch delete + left was +1 --> root ==-2 --> 1 Right Rotation
+    #3: Left branch delete + right==0 --> root==2 --> 1 Left rotation
+    #4: (Mirror)
+    #5: Left branch delete + right==-1 + Lch==-1 --> root==2 --> Double R-L rotation (R about RCh of badbf, L about badBF)
+    #6: (Mirror)
+    #7: Left branch delete + right==-1 + Lch==+1 --> root==2 --> Double R-L rotation (R about Rch of badBF, L about badBF)
+    #8: (Mirror)
+
+
+===================================HELPERS==================================
+
+1. rebalDelete
+    - if (node.bf==+2 & node.right==+1 || node.bf==+2 & node.right==0)
+        leftRot (ie. homoRotate)
+    - else if (node.bf==-2 & node.left==-1 || node.bf==-2 & node.left==0)
+        rightRot (ie. homoRotate)
+    - else if (node.bf==2)
+        rightRot(rCh of node) (ie. heteroRotate)
+        leftRot(node)
+    - else
+        leftRot(LCh of node) (ie. heteroRotate)
+        rightRot(node)
+
