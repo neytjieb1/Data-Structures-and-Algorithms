@@ -3,7 +3,6 @@ Name and Surname:
 Student Number: 
 */
 
-import javax.swing.plaf.TableHeaderUI;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -54,9 +53,9 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
             return null;
          }
          else {
-            clTree.root = new ThreadedAVLNode<T>(root.data);
-            clTree.root.right = new ThreadedAVLNode<T>(root.right.data);
-            clTree.root.left = new ThreadedAVLNode<T>(root.left.data);
+            clTree.root = new ThreadedAVLNode<T>(root.data, root.balanceFactor);
+            clTree.root.right = new ThreadedAVLNode<T>(root.right.data, root.right.balanceFactor);
+            clTree.root.left = new ThreadedAVLNode<T>(root.left.data, root.left.balanceFactor);
          }
 
          ThreadedAVLNode<T> p = root;
@@ -74,10 +73,10 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
 
                //add p to new tree
                if (p.right != null)
-                  clTemp.right = new ThreadedAVLNode<T>(p.right.data);
+                  clTemp.right = new ThreadedAVLNode<T>(p.right.data, p.right.balanceFactor);
                else clTemp.right = null;
                if (p.left != null)
-                  clTemp.left = new ThreadedAVLNode<T>(p.left.data);
+                  clTemp.left = new ThreadedAVLNode<T>(p.left.data, p.left.balanceFactor);
                else clTemp.left = null;
 
                if (p.left != null) {
@@ -103,7 +102,16 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       /*
       This method should count and return the number of nodes currently in the tree.
       */
-      
+     if (root==null) {
+        return 0;
+     }
+     return getNumberOfNodes(root);
+   }
+
+   private int getNumberOfNodes(ThreadedAVLNode<T> n) {
+      if (n!=null) {
+         return 1 + getNumberOfNodes(n.left) + getNumberOfNodes(n.right);
+      }
       return 0;
    }
    
@@ -186,8 +194,7 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
          leftChild = p.left.equals((prev));
       }
       if (Math.abs(prev.balanceFactor) == 2) {
-         prev = reBalance(prev);
-         calculateUpdatedBF(prev);
+         prev = rebalInsert(prev);
          if (p==null) {
             root = prev;
          }
@@ -223,19 +230,19 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       return null;
    }
 
-   public ThreadedAVLNode<T> reBalance(ThreadedAVLNode<T> node) {
+   public ThreadedAVLNode<T> rebalInsert(ThreadedAVLNode<T> node) {
       if (node.balanceFactor==2 && node.right.balanceFactor==1 || node.balanceFactor==-2 && node.left.balanceFactor==-1) {
-         node = homogeneousRotation(node);
+         node = homoRotate(node);
       }
       else {
          node = heteroRotate(node);
       }
+      calculateUpdatedBF(node);
       return node;
 
    }
 
-
-   public ThreadedAVLNode<T> homogeneousRotation(ThreadedAVLNode<T> GP) {
+   public ThreadedAVLNode<T> homoRotate(ThreadedAVLNode<T> GP) {
       if (GP.balanceFactor==2) {
          GP = leftRot(GP);
       }
@@ -275,24 +282,144 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       return Ch;
    }
 
-
-
+   public void calculateUpdatedBF(ThreadedAVLNode <T> node) {
+      if (node==null) return;
+      node.balanceFactor = getHeight(node.right) - getHeight(node.left);
+   }
 
 
    public boolean delete(T element)
    {
-      /*
-      The element passed in as a parameter should be deleted from this tree.
-      Threads must be updated accordingly, as necessary.
-      If the deletion operation was successful, the method should return true.
-      If the deletion operation is unsuccessful for any reason (e.g. the
-      requested element is not found in the tree), the method should return false.
+      //1. Contains Element
+      if (!this.contains(element) || root==null) {
+         return false;
+      }
 
-      NB: Do not throw any exceptions.
-      */
+      //2. Delete by Copy
+      ThreadedAVLNode<T> newParent = getParent(element);
+      ThreadedAVLNode<T> originalParent = delByCopy(element);
 
-      return false;
+
+      //3.1 Tree now empty
+      if (root==null) {
+         return true;
+      }
+
+      //3.2 root element was deleted, tree non-empty
+      if (originalParent==null) {
+         calculateUpdatedBF(root);
+         if (Math.abs(root.balanceFactor)==2) {
+            root = rebalDelete(root);
+         }
+         return true;
+      }
+
+      //3.3 deleted in middle, rebalance
+      while (originalParent!=null) {
+         calculateUpdatedBF(originalParent);
+
+         if (Math.abs(originalParent.balanceFactor)==2) {
+            ThreadedAVLNode<T> GP = getParent(originalParent.data);
+            if (GP==null) {   //now at root
+               root = rebalDelete(root);
+               return true;
+            }
+            boolean leftChild = originalParent.equals(GP.left);
+
+            originalParent = rebalDelete(originalParent);
+
+            if (GP==null) root = originalParent;
+            else if (leftChild) GP.left = originalParent;
+            else GP.right = originalParent;
+         }
+
+         originalParent = getParent(originalParent.data);
+      }
+
+      return true;
+
    }
+
+   /**
+    * @param el
+    * @return parent of original node that was removed
+    */
+   private ThreadedAVLNode<T> delByCopy(T el) {
+      //already know it exists
+      ThreadedAVLNode<T> node=root;
+      ThreadedAVLNode<T> p = root;
+      ThreadedAVLNode<T> prev = null;
+
+      while (p!=null && !p.data.equals(el)) { //finding node in tree
+         prev = p;
+         if (el.compareTo(p.data) < 0) {
+            p = p.left;
+         }
+         else {
+            p = p.right;
+         }
+      }
+
+      node = p;
+
+      ThreadedAVLNode<T> originalParent = null;
+      if (p!=null && p.data.equals(el)) {    //unneccessary condition since will always find node
+         if (node.right == null) {
+            originalParent = prev;
+            node = node.left;
+         }
+         else if (node.left == null) {
+            originalParent = prev;
+            node = node.right;
+         }
+         else {
+            //find rightmost node
+            ThreadedAVLNode<T> temp = node.left;
+            ThreadedAVLNode<T> previous = node;
+            while (temp.right!=null) {
+               previous = temp;
+               temp = temp.right;
+            }
+            originalParent = getParent(temp.data);
+            node.data = temp.data;
+
+
+            if (previous.data.equals(node.data)) {
+               previous.left = temp.left;
+            }
+            else {
+               previous.right = temp.left;
+            }
+         }
+
+         if (p.data.equals(root.data)) {
+            root = node;
+         }
+         else if (p.equals(prev.left)) {
+            prev.left = node;
+         }
+         else {
+            prev.right = node;
+         }
+      }
+      calculateUpdatedBF(originalParent);
+      calculateUpdatedBF(node);
+      return originalParent;
+   }
+
+   private ThreadedAVLNode<T> rebalDelete(ThreadedAVLNode<T> node) {
+      if ( (node.balanceFactor==2 && (node.right.balanceFactor==1 || node.right.balanceFactor==0)) ||
+           (node.balanceFactor==-2&& (node.left.balanceFactor==-1 || node.left.balanceFactor==0 )) ) {
+         node = homoRotate(node);
+      }
+      else {
+         node = heteroRotate(node);
+      }
+      calculateUpdatedBF(node);
+      return node;
+   }
+
+
 
    public boolean contains(T element)
    {
@@ -446,13 +573,10 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
    public void myOwnPreOrder(ThreadedAVLNode<T> n) {
       if (n!=null) {
          System.out.println(n.data + "\tbf: " + n.balanceFactor);
-         myOwnInorder(n.left);
-         myOwnInorder(n.right);
+         myOwnPreOrder(n.left);
+         myOwnPreOrder(n.right);
       }
    }
 
-   public void calculateUpdatedBF(ThreadedAVLNode <T> node) {
-      node.balanceFactor = getHeight(node.right) - getHeight(node.left);
-   }
 
 }
