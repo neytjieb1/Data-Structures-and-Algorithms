@@ -7,7 +7,7 @@ import java.util.Random;
 public class Tester
 {
    static Random rd = new Random();
-   static int numChecks = 10000;
+   static int numChecks = 25;
 
    public static boolean isValidAVL(ThreadedAVLNode<Integer> node) {
       if (node!=null) {
@@ -36,7 +36,6 @@ public class Tester
 
       System.out.println("\nDelete randomly until empty");
       boolean deleted;
-      //rd.setSeed(1234567890);
       i = 0;
       while (t2.getRoot()!=null) {
          int val = Math.abs(rd.nextInt()) % numChecks;
@@ -63,14 +62,9 @@ public class Tester
 
    public static void main(String[] args) throws Exception
    {
-      /*
-      TODO: Write code to thoroughly test your implementation here.
-      Note that this file will be overwritten for marking purposes.
-      */
-
+      rd.setSeed(1234567890);
       //Testing Insert
       ThreadedAVLTree<Integer> t1 = new ThreadedAVLTree<Integer>();
-      //rd.setSeed(1234567890);
       int numDuples = 0;
       for (int i = 0; i < numChecks; i++) {
          int val = Math.abs(rd.nextInt()%numChecks);
@@ -91,16 +85,46 @@ public class Tester
       for (int i = 0; i < 8; i++) {
          t2.insert(arr[i]);
       }
-      //System.out.println("Tree 2");
-      //t2.myOwnPreOrder(t2.getRoot());
+
+      System.out.println("\nTree 1");
+/*      System.out.println("First: " + t1.findLeftestNode(t1.getRoot()).data);
+      System.out.println("Height " + t1.getHeight());
+      System.out.println("#Nodes " + t1.getNumberOfNodes());*/
+      t1.myOwnPreOrder(t1.getRoot());
+      System.out.println(" ");
+      ThreadedAVLTree<Integer> t1_c = t1.clone();
+      t1_c.myOwnPreOrder(t1_c.getRoot());
+
+
+      System.out.println("\nTree 2");
+/*      System.out.println("First: " + t2.findLeftestNode(t2.getRoot()).data);
+      System.out.println("Height " + t2.getHeight());
+      System.out.println("#Nodes " + t2.getNumberOfNodes());*/
+      System.out.println("Before insertion");
+      t2.myOwnPreOrder(t2.getRoot());
+      System.out.println(" ");
+      ThreadedAVLTree<Integer> t2_c = t2.clone();
+      t2_c.myOwnPreOrder(t2_c.getRoot());
       //checkDelete(123456, t2);
 
+      t2.insert(-20);
+      System.out.println("\nAfter Insertion");
+      t2.myOwnPreOrder(t2.getRoot());
+      System.out.println(" ");
+      t2_c.myOwnPreOrder(t2_c.getRoot());
 
 
-      System.out.println("DELETE\nTree 1");
+/*
+      BinaryTreePrinter p = new BinaryTreePrinter();
+      p.printNode(t1.getRoot());
+*/
+
+      /*System.out.println("DELETE");
+      System.out.println("Tree 1");
       //t1.myOwnPreOrder(t1.getRoot());
       t1.delete(441);
-      checkDelete(123456,t1);
+      checkDelete(123456,t1);*/
+
 
 
    }

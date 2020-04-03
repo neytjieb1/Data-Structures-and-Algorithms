@@ -1,42 +1,44 @@
-===================================DELETE===================================
-0. Check empty/absent
+===================================THREADS==================================
+to be updated
+#. constructor
+#. getHeight
+#. getNumNodes
+#. clone
 
-1. Delete by Copying
-    - p.254
+5. rightRot         --> none
+6. leftRot          --> none
+7. homoRotate       --> none
+8. heteroRotate     --> none
 
-2. Update Balance Factors up to root
-    - updateBF(parent)
-      parent = getParent(parent)
-    - while (parent != root)
-        updateBF(parent)
-        if ( Math.abs(parent.bf)==2 )
-            parent = rebalDelete(parent)
-        parent = getParent(parent)
-    - root = rebalDelete(parent)
-
-3. Rebalance
-
-    #1: Left branch delete + right==+1 --> root==2 --> 1 Left rotation
-    #2: (Right branch delete + left was +1 --> root ==-2 --> 1 Right Rotation
-    #3: Left branch delete + right==0 --> root==2 --> 1 Left rotation
-    #4: (Mirror)
-    #5: Left branch delete + right==-1 + Lch==-1 --> root==2 --> Double R-L rotation (R about RCh of badbf, L about badBF)
-    #6: (Mirror)
-    #7: Left branch delete + right==-1 + Lch==+1 --> root==2 --> Double R-L rotation (R about Rch of badBF, L about badBF)
-    #8: (Mirror)
+9. insert
+10. rebalInsert?
+11. delete
+12. rebalDelete?
+11. getParent
 
 
 ===================================HELPERS==================================
 
-1. rebalDelete
-    - if (node.bf==+2 & node.right==+1 || node.bf==+2 & node.right==0)
-        leftRot (ie. homoRotate)
-    - else if (node.bf==-2 & node.left==-1 || node.bf==-2 & node.left==0)
-        rightRot (ie. homoRotate)
-    - else if (node.bf==2)
-        rightRot(rCh of node) (ie. heteroRotate)
-        leftRot(node)
-    - else
-        leftRot(LCh of node) (ie. heteroRotate)
-        rightRot(node)
+1. findFirstGreatGP (node)
+    parent = getParent(node)
+    if parent==null return null
+    else if parent.left==node return parent
+    else return findFirstGreatGP
 
+2. findLeftestNode(p)
+    while (p.left != null)
+        p = p.left
+    return p;
+
+3. Clone
+    clTree = new ThreadedAVLTree();
+    clTree.root = clone(root)
+
+    clone(node)
+        if node==null return null
+        else {
+            newNode = new ThreadedAVLNode(node.data, node.bf, node.threaded)
+            newNode.left = clone(node.left)
+            newNode.right = clone(node.right)
+            return newNode
+        }

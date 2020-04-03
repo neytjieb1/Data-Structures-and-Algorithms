@@ -19,20 +19,20 @@ public class ThreadedAVLNode<T extends Comparable<? super T>>
    protected ThreadedAVLNode<T> right;    // left child
    protected boolean hasThread;           // flag indicating whether the right pointer is a thread
 
-   public ThreadedAVLNode(T val, int bf) {
+   public ThreadedAVLNode(T val, int bf, boolean thr) {
       this.data = val;
       this.balanceFactor = bf;
       this.left = null;
       this.right = null;
-      this.hasThread = false;
+      this.hasThread = thr;
    }
 
    public ThreadedAVLNode(T val) {
-      this(val, 0);
+      this(val, 0, false);
    }
 
    public ThreadedAVLNode() {
-      this(null,0);
+      this(null,0,false);
    }
 
    public void printNodeInfo() {

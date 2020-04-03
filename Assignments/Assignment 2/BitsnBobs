@@ -192,3 +192,140 @@ System.out.println("\n\nRoot: " + t1.getRoot().data + " bf: " + t1.getRoot().bal
           calculateUpdatedBF(parent);
        }
  */
+
+
+
+    public ThreadedAVLTree(ThreadedAVLNode<T> node)
+    {
+       this.root = node;
+    }
+
+
+      System.out.println("For 11:" + t1.findFirstRGreatGP(t1.findNode(11)));
+      System.out.println("For 4:" + t1.findFirstRGreatGP(t1.findNode(4)).data);
+      System.out.println("For 7:" + t1.findFirstRGreatGP(t1.findNode(7)).data);
+      System.out.println("For 2:" + t1.findFirstRGreatGP(t1.findNode(2)).data);
+      System.out.println("For 1:" + t1.findFirstRGreatGP(t1.findNode(1)).data);
+      System.out.println("For 3:" + t1.findFirstRGreatGP(t1.findNode(3)).data);
+      System.out.println("For 15:" + t1.findFirstRGreatGP(t1.findNode(15)));
+      System.out.println("For 14:" + t1.findFirstRGreatGP(t1.findNode(14)).data);
+      System.out.println("For 20:" + t1.findFirstRGreatGP(t1.findNode(20)).data);
+      System.out.println("For 17:" + t1.findFirstRGreatGP(t1.findNode(17)).data);
+      System.out.println("For 22:" + t1.findFirstRGreatGP(t1.findNode(22)));
+      System.out.println("For 23:" + t1.findFirstRGreatGP(t1.findNode(23)));
+      System.out.println("For 24:" + t1.findFirstRGreatGP(t1.findNode(24)));
+
+
+      public boolean contains(T element) {
+            /*ThreadedAVLNode<T> p = root;
+            while (p!=null) {
+               if (element.equals(p.data)) {
+                  return true;
+               }
+               else if (element.compareTo(p.data) < 0) {
+                  p = p.left;
+               }
+               else {
+                  p = p.right;
+               }
+            }
+            return false;*/
+         }
+
+
+
+
+===================================DELETE===================================
+0. Check empty/absent
+
+1. Delete by Copying
+    - p.254
+
+2. Update Balance Factors up to root
+    - updateBF(parent)
+      parent = getParent(parent)
+    - while (parent != root)
+        updateBF(parent)
+        if ( Math.abs(parent.bf)==2 )
+            parent = rebalDelete(parent)
+        parent = getParent(parent)
+    - root = rebalDelete(parent)
+
+3. Rebalance
+
+    #1: Left branch delete + right==+1 --> root==2 --> 1 Left rotation
+    #2: (Right branch delete + left was +1 --> root ==-2 --> 1 Right Rotation
+    #3: Left branch delete + right==0 --> root==2 --> 1 Left rotation
+    #4: (Mirror)
+    #5: Left branch delete + right==-1 + Lch==-1 --> root==2 --> Double R-L rotation (R about RCh of badbf, L about badBF)
+    #6: (Mirror)
+    #7: Left branch delete + right==-1 + Lch==+1 --> root==2 --> Double R-L rotation (R about Rch of badBF, L about badBF)
+    #8: (Mirror)
+
+
+===================================HELPERS==================================
+
+1. rebalDelete
+    - if (node.bf==+2 & node.right==+1 || node.bf==+2 & node.right==0)
+        leftRot (ie. homoRotate)
+    - else if (node.bf==-2 & node.left==-1 || node.bf==-2 & node.left==0)
+        rightRot (ie. homoRotate)
+    - else if (node.bf==2)
+        rightRot(rCh of node) (ie. heteroRotate)
+        leftRot(node)
+    - else
+        leftRot(LCh of node) (ie. heteroRotate)
+        rightRot(node)
+
+
+
+OLD CLONE
+/*public ThreadedAVLTree<T> clone() {      //only works with queues. Update to work with Threads
+      //Breadth-First Traversal
+
+         //Create cloneTree
+         ThreadedAVLTree<T> clTree = new ThreadedAVLTree<T>();
+
+         //if empty
+         if (root==null) {
+            return null;
+         }
+         else {
+            clTree.root = new ThreadedAVLNode<T>(root.data, root.balanceFactor,root.hasThread);
+            clTree.root.right = new ThreadedAVLNode<T>(root.right.data, root.right.balanceFactor,root.hasThread);
+            clTree.root.left = new ThreadedAVLNode<T>(root.left.data, root.left.balanceFactor,root.hasThread);
+         }
+
+         ThreadedAVLNode<T> p = root;
+         ThreadedAVLNode<T> clTemp = clTree.root;
+         Queue<ThreadedAVLNode<T>> trueQ = new LinkedList<ThreadedAVLNode<T>>();
+         Queue<ThreadedAVLNode<T>> cloneQ = new LinkedList<ThreadedAVLNode<T>>();
+
+         if (p!=null) {
+            trueQ.add(p);
+            cloneQ.add(clTemp);
+
+            while (!trueQ.isEmpty()) {
+               p = trueQ.remove();
+               clTemp = cloneQ.remove();
+
+               //add p to new tree
+               if (p.right != null)
+                  clTemp.right = new ThreadedAVLNode<T>(p.right.data, p.right.balanceFactor,p.right.hasThread);
+               else clTemp.right = null;
+               if (p.left != null)
+                  clTemp.left = new ThreadedAVLNode<T>(p.left.data, p.left.balanceFactor,p.right.hasThread);
+               else clTemp.left = null;
+
+               if (p.left != null) {
+                  trueQ.add(p.left);
+                  cloneQ.add(clTemp.left);
+               }
+               if (p.right != null) {
+                  trueQ.add(p.right);
+                  cloneQ.add(clTemp.right);
+               }
+            }
+         }
+         return clTree;
+   }*/
