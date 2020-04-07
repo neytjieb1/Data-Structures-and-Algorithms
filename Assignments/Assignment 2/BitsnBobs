@@ -329,3 +329,17 @@ OLD CLONE
          }
          return clTree;
    }*/
+
+
+   public ThreadedAVLNode<T> findFirstRGreatGP(ThreadedAVLNode<T> node) {
+      ThreadedAVLNode<T> parent = getParent(node.data);
+      if (parent==null) return null;
+      else if (node.equals(parent.left)) return parent;
+      else return findFirstRGreatGP(parent);
+   }
+   public ThreadedAVLNode<T> findLeftestNode(ThreadedAVLNode<T> p) {
+      if (p==null) return null;
+      while (p.left != null) p = p.left;
+      return p;
+   }
+

@@ -45,7 +45,10 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       else {
          ThreadedAVLNode<T> newNode = new ThreadedAVLNode<T>((T)node.data, node.balanceFactor, node.hasThread);
          newNode.left = clone(node.left);
-         newNode.right = clone(node.right);
+
+         if (node.hasThread) newNode.right = null;
+         else newNode.right = clone(node.right);
+
          return newNode;
       }
    }
@@ -67,7 +70,13 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
    }
    private int getNumberOfNodes(ThreadedAVLNode<T> n) {
       if (n!=null) {
-         return 1 + getNumberOfNodes(n.left) + getNumberOfNodes(n.right);
+         if (n.hasThread) {
+            return 1 + getNumberOfNodes(n.left) + 0;
+         }
+         else {
+            return 1 + getNumberOfNodes(n.left) + getNumberOfNodes(n.right);
+         }
+
       }
       return 0;
    }
@@ -99,34 +108,37 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       }
 
       //Step 2: insertion
+      ThreadedAVLNode<T> newNode = new ThreadedAVLNode<T>(element);
+      //Empty Tree
+      if (root==null) {
+         root = newNode;
+         return true;
+      }
+
+      //Elsewhere
       ThreadedAVLNode<T> p = root;
       ThreadedAVLNode<T> prev = null;
       //find place to insert
       while (p != null) {
          prev = p;
-         if (element.compareTo(p.data) < 0) {
-            p = p.left;
-         } else {
-            p = p.right;
-         }
-      }
-      //insert node
-      ThreadedAVLNode<T> newNode = new ThreadedAVLNode<T>(element);
-      if (root==null) {       //at root
-         root = newNode;
-         return true;
-      }
-      else if (element.compareTo(prev.data) < 0) {    //somewhere else
-         prev.left = newNode;
-      } else {
-         prev.right = newNode;
+         if (element.compareTo(p.data) < 0) p = p.left;
+         else if (!p.hasThread) p = p.right;
+         else break;
       }
 
-/*      ThreadedAVLNode<T> rGP = findFirstRGreatGP(newNode);
-      if (rGP!=null) {
+      //Insert accordingly
+      if (element.compareTo(prev.data) < 0) {    //insert at left & update threads
+         prev.left = newNode;
          newNode.hasThread = true;
-         newNode.right = rGP;
-      }*/
+         newNode.right = prev;
+      }
+      else if (prev.hasThread) {
+         newNode.hasThread = true;          //insert at right & update threads
+         prev.hasThread = false;
+         newNode.right = prev.right;
+         prev.right = newNode;
+      }
+      else prev.right = newNode;
 
 
       //Step 3: update BF's
@@ -142,7 +154,6 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
          if (newNode.balanceFactor==0) {
             calculateUpdatedBF(newNode);
             break;
-            //??
          }
          if (newNode.equals(prev.left)) {
             prev.balanceFactor--;
@@ -152,19 +163,21 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
          }
       }
 
-      //Step 4: Rebalance tree
-      p = getParent(prev.data);  //should be null if prev == root
+      //Step 4: Rebalance tree at prev (bf= +-2)
+      p = getParent(prev.data);  //null if prev == root
       boolean leftChild = false;
-      if (p!=null) {
-         leftChild = p.left.equals((prev));
-      }
+      if (p!=null) leftChild = p.left.equals((prev)); //determine if L/R Child
       if (Math.abs(prev.balanceFactor) == 2) {
          prev = rebalInsert(prev);
+         //add into tree
          if (p==null) {
             root = prev;
          }
          else if (leftChild) {
             p.left = prev;
+         }
+         else if (p.hasThread) {
+            //xxx
          }
          else {
             p.right = prev;
@@ -351,42 +364,42 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       }
       return GP;
    }
-   public ThreadedAVLNode<T> rightRot(ThreadedAVLNode<T> P) {
-      ThreadedAVLNode<T> Ch = P.left;
-      P.left = Ch.right;
-      Ch.right = P;
-      calculateUpdatedBF(Ch);
-      calculateUpdatedBF(Ch.right);
-      return Ch;
-   }
+
+   //Work here
    public ThreadedAVLNode<T> leftRot(ThreadedAVLNode<T> P) {
       ThreadedAVLNode<T> Ch = P.right;
+      boolean hasRightChild = Ch.right!=null;
       P.right = Ch.left;
       Ch.left = P;
+      if (!hasRightChild) {
+         P.hasThread = true;
+         P.right = Ch;
+       }
       calculateUpdatedBF(Ch);
       calculateUpdatedBF(Ch.left);
       return Ch;
    }
+
+   public ThreadedAVLNode<T> rightRot(ThreadedAVLNode<T> P) {
+      ThreadedAVLNode<T> Ch = P.left;
+      if (Ch.hasThread) Ch.right = null;
+      P.left = Ch.right;
+      Ch.right = P;
+      Ch.hasThread = false;
+      calculateUpdatedBF(Ch);
+      calculateUpdatedBF(Ch.right);
+      return Ch;
+   }
+
    public void calculateUpdatedBF(ThreadedAVLNode <T> node) {
       if (node==null) return;
-      node.balanceFactor = getHeight(node.right) - getHeight(node.left);
+      if (node.hasThread) node.balanceFactor = getHeight(null) - getHeight(node.left);
+      else node.balanceFactor = getHeight(node.right) - getHeight(node.left);
    }
    public boolean contains(T element) {
       return findNode(element) != null;
    }
 
-   public ThreadedAVLNode<T> findFirstRGreatGP(ThreadedAVLNode<T> node) {
-      ThreadedAVLNode<T> parent = getParent(node.data);
-      if (parent==null) return null;
-      else if (node.equals(parent.left)) return parent;
-      else return findFirstRGreatGP(parent);
-   }
-
-   public ThreadedAVLNode<T> findLeftestNode(ThreadedAVLNode<T> p) {
-      if (p==null) return null;
-      while (p.left != null) p = p.left;
-      return p;
-   }
 
    public String inorder() {
       /*
@@ -513,7 +526,8 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       if (n!=null) {
          System.out.println(n.data + "\tbf: " + n.balanceFactor);
          myOwnPreOrder(n.left);
-         myOwnPreOrder(n.right);
+         if (n.hasThread) return;
+         else myOwnPreOrder(n.right);
       }
    }
 
@@ -523,11 +537,14 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
          if (element.equals(p.data)) {
             return p;
          }
-         else  if (element.compareTo(p.data) < 0) {
+         else if (element.compareTo(p.data) < 0) {
             p = p.left;
          }
-         else {
+         else if (!p.hasThread){
             p = p.right;
+         }
+         else {
+            return null;
          }
       }
       return null;

@@ -5,12 +5,12 @@ to be updated
 #. getNumNodes
 #. clone
 
-5. rightRot         --> none
-6. leftRot          --> none
-7. homoRotate       --> none
-8. heteroRotate     --> none
+#. rightRot
+#. leftRot
+#. homoRotate       --> none
+#. heteroRotate     --> none
 
-9. insert
+#. insert
 10. rebalInsert?
 11. delete
 12. rebalDelete?
