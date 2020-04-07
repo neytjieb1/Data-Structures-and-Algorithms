@@ -371,7 +371,7 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       boolean hasRightChild = Ch.right!=null;
       P.right = Ch.left;
       Ch.left = P;
-      if (!hasRightChild) {
+      if (hasRightChild) {
          P.hasThread = true;
          P.right = Ch;
        }
@@ -422,8 +422,17 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       
       A,B,C,D,E,F
       */
-      
-      return "";
+      if (root==null) return "";
+      String out = "";
+      ThreadedAVLNode<T> node = findLeftestNode(root);
+      while (node.right!=null) {
+         out += node.data + ",";
+         if (node.hasThread) node = node.right;
+         else node = findLeftestNode(node.right);
+      }
+      out += node.data;
+      return out;
+
    }
    public String inorderDetailed() {
       /*
@@ -451,8 +460,23 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       
       A|B|C,D|E,F
       */
-      
-      return "";
+      if (root==null) return "";
+
+      String out = "";
+      ThreadedAVLNode<T> node = findLeftestNode(root);
+      while (node.right!=null) {
+         if (node.hasThread) {
+            out += node.data + "|";
+            node = node.right;
+         }
+         else {
+            out += node.data + ",";
+            node = findLeftestNode(node.right);
+         }
+      }
+      out += node.data;
+      return out;
+
    }
    public String preorder() {
       /*
@@ -476,8 +500,17 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       
       C,B,A,E,D,F
       */
-      
-      return "";
+      if (root==null) return "";
+
+      ThreadedAVLNode<T> node = root;
+      String out = "";
+      while (node.right != null) {
+         out += node.data + ",";
+         if (node.left!=null) node = node.left;
+         else node = goToGGP(node).right;
+      }
+      out += node.data;
+      return out;
    }
    public String preorderDetailed() {
       /*
@@ -513,18 +546,32 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       
       return "";
    }
+   public ThreadedAVLNode<T> findLeftestNode(ThreadedAVLNode<T> p) {
+      if (p==null) return null;
+      while (p.left != null) p = p.left;
+      return p;
+   }
+
+   public ThreadedAVLNode<T> goToGGP(ThreadedAVLNode<T> n) {
+      while (n.hasThread) n = n.right;
+      return n;
+   }
+
 
 
    public void myOwnInorder(ThreadedAVLNode<T> n) {
       if (n!=null) {
          myOwnInorder(n.left);
-         System.out.println(n.data + "\tbf: " + n.balanceFactor);
-         myOwnInorder(n.right);
+         //System.out.println(n.data + "\tbf: " + n.balanceFactor);
+         System.out.print(n.data + ",");
+         if (n.hasThread) return;
+         else myOwnInorder(n.right);
       }
    }
    public void myOwnPreOrder(ThreadedAVLNode<T> n) {
       if (n!=null) {
-         System.out.println(n.data + "\tbf: " + n.balanceFactor);
+         //System.out.print(n.data + "\tbf: " + n.balanceFactor);
+         System.out.print(n.data + ",");
          myOwnPreOrder(n.left);
          if (n.hasThread) return;
          else myOwnPreOrder(n.right);

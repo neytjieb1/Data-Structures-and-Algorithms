@@ -343,3 +343,11 @@ OLD CLONE
       return p;
    }
 
+    public boolean isLeaf(ThreadedAVLNode<T> n) {
+          return ( n.left==null && (n.hasThread || n.right==null) );
+       }
+
+    public ThreadedAVLNode<T> gotToGGP(ThreadedAVLNode<T> n) {
+        while (n.hasThread) n = n.right
+        return n;
+    }

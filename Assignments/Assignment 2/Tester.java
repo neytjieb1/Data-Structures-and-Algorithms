@@ -7,7 +7,7 @@ import java.util.Random;
 public class Tester
 {
    static Random rd = new Random();
-   static int numChecks = 15;
+   static int numChecks = 50;
 
    public static boolean isValidAVL(ThreadedAVLNode<Integer> node) {
       if (node!=null) {
@@ -53,6 +53,16 @@ public class Tester
    }
 
    public static void CheckInsert(ThreadedAVLTree<Integer> t1, ThreadedAVLTree<Integer> t2, Integer[] arr) {
+       BinaryTreePrinter p = new BinaryTreePrinter();
+
+       for (int i = 0; i < arr.length; i++) {
+           t2.insert(arr[i]);
+       }
+       System.out.println("INSERT ACCORDING TO ARRAY");
+       System.out.println("NumNodes: " + t2.getNumberOfNodes());
+       System.out.println("Valid: " + isValidAVL(t2.getRoot()));
+       p.printNode(t2.getRoot());
+
        int numDuples = 0;
        for (int i = 0; i < numChecks; i++) {
            int val = Math.abs(rd.nextInt()%numChecks);
@@ -66,20 +76,39 @@ public class Tester
        System.out.println("NumDuples: " + numDuples);
        System.out.println("NumNodes: " + t1.getNumberOfNodes());
        System.out.println("Valid: " + isValidAVL(t1.getRoot()));
-       BinaryTreePrinter p = new BinaryTreePrinter();
        p.printNode(t1.getRoot());
 
 
-       for (int i = 0; i < arr.length; i++) {
-           t2.insert(arr[i]);
-       }
-       System.out.println("INSERT ACCORDING TO ARRAY");
-       System.out.println("NumNodes: " + t2.getNumberOfNodes());
-       System.out.println("Valid: " + isValidAVL(t2.getRoot()));
-       p.printNode(t2.getRoot());
 
    }
 
+   public static void testClone(ThreadedAVLTree<Integer> tOriginal) {
+       System.out.println("CLONE");
+       ThreadedAVLTree<Integer> tclone = tOriginal.clone();
+       System.out.println("Original before Insert");
+       tOriginal.myOwnPreOrder(tOriginal.getRoot());
+       System.out.println("Clone before Insert");
+       tclone.myOwnPreOrder(tclone.getRoot());
+       tOriginal.insert(22);
+       System.out.println("Original after insert of 22");
+       tOriginal.myOwnPreOrder(tOriginal.getRoot());
+       System.out.println("LCone before Insert");
+       tclone.myOwnPreOrder(tclone.getRoot());
+   }
+
+   public static void testInOrder(ThreadedAVLTree<Integer> tree) {
+       tree.myOwnInorder(tree.getRoot());
+       System.out.println("\n" + tree.inorder());
+       System.out.println(tree.inorderDetailed());
+       System.out.println("");
+   }
+
+   public static void testPreOrder(ThreadedAVLTree<Integer> tree) {
+       tree.myOwnPreOrder(tree.getRoot());
+       System.out.println("\n" + tree.preorder());
+       //System.out.println(tree.preorderDetailed());
+       System.out.println("");
+   }
 
    public static void main(String[] args) throws Exception
    {
@@ -90,21 +119,16 @@ public class Tester
        Integer arr[] = {15,10,30,5,20,11,40,12};
        CheckInsert(t1,t2, arr);
 
-
-
        //TEST CLONE
-       System.out.println("CLONE");
-       ThreadedAVLTree<Integer> tclone = t2.clone();
-       System.out.println("Original before Insert");
-       t2.myOwnPreOrder(t2.getRoot());
-       System.out.println("Clone before Insert");
-       tclone.myOwnPreOrder(tclone.getRoot());
-       t2.insert(22);
-       System.out.println("Original after insert of 22");
-       t2.myOwnPreOrder(t2.getRoot());
-       System.out.println("LCone before Insert");
-       tclone.myOwnPreOrder(tclone.getRoot());
+       //testClone(t2);
 
+       //Test Threaded Inorder
+       testInOrder(t1);
+       testInOrder(t2);
+
+       //Test Threaded PreOrder
+       testPreOrder(t1);
+       testPreOrder(t2);
 
 
        /*       System.out.println("DELETE");
