@@ -368,6 +368,17 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
    //Work here
    public ThreadedAVLNode<T> leftRot(ThreadedAVLNode<T> P) {
       ThreadedAVLNode<T> Ch = P.right;
+      boolean hasLeftChild = Ch.left!=null;
+      P.right = Ch.left;
+      Ch.left = P;
+      if (!hasLeftChild) {
+         P.hasThread = true;
+         P.right = Ch;
+      }
+      calculateUpdatedBF(Ch);
+      calculateUpdatedBF(Ch.left);
+      return Ch;
+      /*ThreadedAVLNode<T> Ch = P.right;
       boolean hasRightChild = Ch.right!=null;
       P.right = Ch.left;
       Ch.left = P;
@@ -377,9 +388,8 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
        }
       calculateUpdatedBF(Ch);
       calculateUpdatedBF(Ch.left);
-      return Ch;
+      return Ch;*/
    }
-
    public ThreadedAVLNode<T> rightRot(ThreadedAVLNode<T> P) {
       ThreadedAVLNode<T> Ch = P.left;
       if (Ch.hasThread) Ch.right = null;
@@ -399,7 +409,6 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
    public boolean contains(T element) {
       return findNode(element) != null;
    }
-
 
    public String inorder() {
       /*
@@ -434,6 +443,7 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       return out;
 
    }
+
    public String inorderDetailed() {
       /*
       This method must return a string representation of the elements in the tree visited during an
@@ -478,6 +488,7 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       return out;
 
    }
+
    public String preorder() {
       /*
       This method must return a string representation of the elements in the tree visited during a
@@ -504,12 +515,14 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
 
       ThreadedAVLNode<T> node = root;
       String out = "";
-      while (node.right != null) {
+      while (node != null) {
          out += node.data + ",";
          if (node.left!=null) node = node.left;
-         else node = goToGGP(node).right;
+         else {
+            node = goToGGP(node).right;
+         }
       }
-      out += node.data;
+      out = out.substring(0, out.length()-1);
       return out;
    }
    public String preorderDetailed() {
@@ -543,9 +556,14 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       child of node A to node B is followed, B is not printed because it has already been visited,
       and the thread linking the right child of node B to node C is followed.
       */
-      
-      return "";
+      if (root==null) return "";
+
+      ThreadedAVLNode<T> node = root;
+      String out = "";
+      return out;
+
    }
+
    public ThreadedAVLNode<T> findLeftestNode(ThreadedAVLNode<T> p) {
       if (p==null) return null;
       while (p.left != null) p = p.left;
@@ -557,17 +575,16 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       return n;
    }
 
-
-
    public void myOwnInorder(ThreadedAVLNode<T> n) {
       if (n!=null) {
          myOwnInorder(n.left);
-         //System.out.println(n.data + "\tbf: " + n.balanceFactor);
-         System.out.print(n.data + ",");
+         System.out.println(n.data + "\tbf: " + n.balanceFactor);
+         //System.out.print(n.data + ",");
          if (n.hasThread) return;
          else myOwnInorder(n.right);
       }
    }
+
    public void myOwnPreOrder(ThreadedAVLNode<T> n) {
       if (n!=null) {
          //System.out.print(n.data + "\tbf: " + n.balanceFactor);
@@ -578,7 +595,8 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       }
    }
 
-   public ThreadedAVLNode<T> findNode(T element) {
+   public ThreadedAVLNode<T> findNode(T element)
+   {
       ThreadedAVLNode<T> p = root;
       while (p!=null) {
          if (element.equals(p.data)) {
@@ -597,6 +615,8 @@ public class ThreadedAVLTree<T extends Comparable<? super T>>
       return null;
 
    }
+
+
 
 
 }

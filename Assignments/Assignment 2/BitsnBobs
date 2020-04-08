@@ -351,3 +351,11 @@ OLD CLONE
         while (n.hasThread) n = n.right
         return n;
     }
+
+
+    /* while (true) {
+             out += node.data + ",";
+             if (node.left!=null) node=node.left;
+             else node = goToGGP(node);
+             if (node==root)
+          }*/

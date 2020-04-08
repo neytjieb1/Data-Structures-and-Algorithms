@@ -7,7 +7,7 @@ import java.util.Random;
 public class Tester
 {
    static Random rd = new Random();
-   static int numChecks = 50;
+   static int numChecks = 300;
 
    public static boolean isValidAVL(ThreadedAVLNode<Integer> node) {
       if (node!=null) {
@@ -61,22 +61,24 @@ public class Tester
        System.out.println("INSERT ACCORDING TO ARRAY");
        System.out.println("NumNodes: " + t2.getNumberOfNodes());
        System.out.println("Valid: " + isValidAVL(t2.getRoot()));
-       p.printNode(t2.getRoot());
+       //p.printNode(t2.getRoot());
 
        int numDuples = 0;
        for (int i = 0; i < numChecks; i++) {
            int val = Math.abs(rd.nextInt()%numChecks);
+           //System.out.print("i: " + i + " val: " + val);
            //System.out.print(val + " ");
            if (!t1.insert(val)) {
                numDuples++;
            }
+           //System.out.println(" valid: " + isValidAVL(t1.getRoot()));
        }
        System.out.println("INSERT Randomly");
        System.out.println("Numchecks: " + numChecks);
        System.out.println("NumDuples: " + numDuples);
        System.out.println("NumNodes: " + t1.getNumberOfNodes());
        System.out.println("Valid: " + isValidAVL(t1.getRoot()));
-       p.printNode(t1.getRoot());
+       //p.printNode(t1.getRoot());
 
 
 
@@ -123,10 +125,12 @@ public class Tester
        //testClone(t2);
 
        //Test Threaded Inorder
+       /*System.out.println("TEST INORDER");
        testInOrder(t1);
-       testInOrder(t2);
+       testInOrder(t2);*/
 
        //Test Threaded PreOrder
+       System.out.println("TEST PREORDER");
        testPreOrder(t1);
        testPreOrder(t2);
 
