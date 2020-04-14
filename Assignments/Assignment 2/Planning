@@ -11,34 +11,84 @@ to be updated
 #. heteroRotate     --> none
 
 #. insert
-10. rebalInsert?
+#. rebalInsert?
 11. delete
 12. rebalDelete?
-11. getParent
+#. getParent
 
 
-===================================HELPERS==================================
+==================================DELBYCOPY=================================
+0 p = delNode = findNode(element);
+  prev = getParent(element);        //will change if 2 children
 
-1. findFirstGreatGP (node)
-    parent = getParent(node)
-    if parent==null return null
-    else if parent.left==node return parent
-    else return findFirstGreatGP
+1 if isLeaf(delNode)
+    if (prev.left = node)           //leftLeaf
+        node = node.left
+    else //rightLeaf
+        prev.hasThread = delNode.hasThread
+        prev.right = delNode.right
 
-2. findLeftestNode(p)
-    while (p.left != null)
-        p = p.left
-    return p;
+2 if (!hasRightChild(delNode))           //delNode has left child (no right child)
+    if ( !hasRightChild(delNode.left)     //delNode's leftChild DOESN'T HAVE rightChild
+        delNode.left.hasThread = delNode.hasThread
+        delNode.left.right = delNode.right;
+    else            //(delNode's leftChild has a rightChild)
+        ThreadedAVLNode<T> rightest = rightMostNode(delNode.left)[0];
+        rightest.hasThread = delNode.hasThread;       //rightest node of delNode.left  -->  hasThread = delNode.hasThread
+        rightest.right = delNode.right;                   //rightest node of delNode.left  -->  right = delNode.right
 
-3. Clone
-    clTree = new ThreadedAVLTree();
-    clTree.root = clone(root)
+3 if delNode has right child (no left child)
+    node = node.right               //enough?
 
-    clone(node)
-        if node==null return null
-        else {
-            newNode = new ThreadedAVLNode(node.data, node.bf, node.threaded)
-            newNode.left = clone(node.left)
-            newNode.right = clone(node.right)
-            return newNode
-        }
+4 if 2 children
+    ThreadedAVLNode<T>[] arr = rightMostNode(node);
+    ThreadedAVLNode<T> temp = arr[0];
+    ThreadedAVLNode<T> previous = arr[1];
+
+    originalParent = getParent(temp.data);
+    node.data = temp.data;
+
+    if (previous == node) //(ie. left subtree doesn't have right child)
+        previous.hasThread = temp.hasThread;
+        previous.right = temp.right;
+        previous.left = temp.left
+    else    // (ie. left subtree has right child) (and temp.right is either null or temp.hasThread)
+        arr = rightMostNode(temp.left);         //returns rightmost node and also parent of rightmost node)
+        arr[0].hasThread = temp.hasThread;
+        arr[0].right = temp.right
+        previous.right = temp.left
+
+
+LATER
+
+if (p==root) root = node;
+else if (prev.left==p) prev.left = node;
+else (prev.right = node);
+
+FINALLY
+
+calculateUpdatedBF(originalParent);
+calculateUpdatedBF(node);
+return originalParent;
+
+
+HELPER
+
+public boolean isLeaf(ThreadedAVLNode<T> n) {
+      return ( n.left==null && (n.hasThread || n.right==null) );
+   }
+
+
+private ThreadedAVLNode<T>[] rightMostNode(ThreadedAVLNode<T> node) {
+    ThreadedAVLNode<T> temp = node.left;
+    ThreadedAVLNode<T> previous = node;
+    while (temp.right != null && !temp.hasThread) {
+        previous = temp;
+        temp = temp.right;
+    }
+    return {temp, previous};
+}
+
+private boolean hasRightChild (ThreadedAVLNode<T> node) {
+    return (node.right!= null && !node.hasThread)
+}

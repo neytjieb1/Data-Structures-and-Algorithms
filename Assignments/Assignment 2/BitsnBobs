@@ -359,3 +359,186 @@ OLD CLONE
              else node = goToGGP(node);
              if (node==root)
           }*/
+
+
+
+/*
+    //1st Attempt Threaded delByCopy
+
+    {
+        //1. Contains Element
+        if (!this.contains(element) || root == null) {
+            return false;
+        }
+
+        //2. Delete by Copy
+        ThreadedAVLNode<T> newParent = getParent(element);
+        ThreadedAVLNode<T> originalParent = delByCopy(element);
+
+
+        //3.1 Tree now empty
+        if (root == null) {
+            return true;
+        }
+
+        //3.2 root element was deleted, tree non-empty
+        if (originalParent == null) {
+            calculateUpdatedBF(root);
+            if (Math.abs(root.balanceFactor) == 2) {
+                root = rebalDelete(root);
+            }
+            return true;
+        }
+
+        //3.3 deleted in middle, rebalance
+        while (originalParent != null) {
+            calculateUpdatedBF(originalParent);
+
+            if (Math.abs(originalParent.balanceFactor) == 2) {
+                ThreadedAVLNode<T> GP = getParent(originalParent.data);
+                if (GP == null) {   //now at root
+                    root = rebalDelete(root);
+                    return true;
+                }
+                boolean leftChild = originalParent.equals(GP.left);
+
+                originalParent = rebalDelete(originalParent);
+
+                if (GP == null) root = originalParent;
+                else if (leftChild) GP.left = originalParent;
+                else GP.right = originalParent;
+            }
+
+            originalParent = getParent(originalParent.data);
+        }
+
+        return true;
+
+    }
+     */
+
+
+
+         /*private ThreadedAVLNode<T> thrDelByCopy(T el) {
+             //find node and previous
+             ThreadedAVLNode<T> p = findNode(el);
+             ThreadedAVLNode<T> prev = getParent(el);
+             ThreadedAVLNode<T> delNode = p;
+             ThreadedAVLNode<T> originalParent = prev;  //originalP will change if 2 children
+
+             //CASES
+             //1
+             if (isLeaf(delNode)) {
+                 if (delNode.equals(prev.left)) {
+                     //delNode = delNode.left;
+                 }
+                 else {
+                     prev.hasThread = delNode.hasThread;
+                     prev.right = delNode.right;
+                 }
+                 delNode = null;
+             }
+             //2
+             else if (delNode.left != null && !hasRightChild(delNode)) {
+                 if (!hasRightChild(delNode.left)) {
+                     delNode.left.hasThread = delNode.hasThread;
+                     delNode.left.right = delNode.right;
+                 } else {
+                     ThreadedAVLNode<T> rightest = rightMostNode((delNode.left))[0];
+                     rightest.hasThread = delNode.hasThread;
+                     rightest.right = delNode.right;
+                 }
+                 delNode = delNode.left;
+             }
+             //3
+             else if (hasRightChild(delNode) && delNode.left == null) {
+                 delNode = delNode.right;
+             }
+             //4
+             else {
+                 ThreadedAVLNode<T>[] arr = rightMostNode(delNode);
+                 ThreadedAVLNode<T> temp = arr[0];
+                 ThreadedAVLNode<T> previous = arr[1];
+
+                 originalParent = previous;
+                 delNode.data = temp.data;
+
+                 if (previous.data.equals(delNode.data)) {
+                     previous.hasThread = temp.hasThread;
+                     previous.right = temp.right;
+                     previous.left = temp.left;
+                 } else {
+                     arr = rightMostNode(temp.left);
+                     arr[0].hasThread = temp.hasThread;
+                     arr[0].right = temp.right;
+                     previous.right = temp.left;
+                 }
+             }
+
+             if (p.data.equals(root.data)) root = delNode;
+             else if (p.equals(prev.left)) prev.left = delNode;
+             else prev.right = delNode;
+
+             calculateUpdatedBF(delNode);
+             return originalParent;
+         }*/
+
+
+
+//Working perfectly, but unthreaded
+private ThreadedAVLNode<T> delByCopy(T el) {
+        //already know it exists
+        ThreadedAVLNode<T> node = root;
+        ThreadedAVLNode<T> p = root;
+        ThreadedAVLNode<T> prev = null;
+
+        while (p != null && !p.data.equals(el)) { //finding node in tree
+            prev = p;
+            if (el.compareTo(p.data) < 0) {
+                p = p.left;
+            } else {
+                p = p.right;
+            }
+        }
+
+        node = p;
+
+        ThreadedAVLNode<T> originalParent = null;
+        if (p != null && p.data.equals(el)) {    //unneccessary condition since will always find node
+            if (node.right == null) {
+                originalParent = prev;
+                node = node.left;
+            } else if (node.left == null) {
+                originalParent = prev;
+                node = node.right;
+            } else {
+                //find rightmost node
+                ThreadedAVLNode<T> temp = node.left;
+                ThreadedAVLNode<T> previous = node;
+                while (temp.right != null) {
+                    previous = temp;
+                    temp = temp.right;
+                }
+                originalParent = getParent(temp.data);
+                node.data = temp.data;
+
+
+                if (previous.data.equals(node.data)) {
+                    previous.left = temp.left;
+                } else {
+                    previous.right = temp.left;
+                }
+            }
+
+            if (p.data.equals(root.data)) {
+                root = node;
+            } else if (p.equals(prev.left)) {
+                prev.left = node;
+            } else {
+                prev.right = node;
+            }
+        }
+        calculateUpdatedBF(originalParent);
+        calculateUpdatedBF(node);
+        return originalParent;
+    }
