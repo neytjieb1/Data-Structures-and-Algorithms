@@ -1,0 +1,23 @@
+public void myOwnInorder(ThreadedAVLNode<T> n) {
+    if (n != null) {
+        myOwnInorder(n.left);
+        //System.out.println(n.data + "\tbf: " + n.balanceFactor);
+        System.out.print(n.data + ",");
+        if (n.hasThread) return;
+        else myOwnInorder(n.right);
+    }
+}
+
+public void myOwnPreOrder(ThreadedAVLNode<T> n) {
+    if (n != null) {
+        //System.out.println(n.data + "\tbf: " + n.balanceFactor + "\thasThread: " + n.hasThread);
+        System.out.print(n.data + ",");
+        myOwnPreOrder(n.left);
+        if (n.hasThread) return;
+        else myOwnPreOrder(n.right);
+    }
+}
+
+public void clearTree(ThreadedAVLTree<T> t) {
+    root = null;
+}
