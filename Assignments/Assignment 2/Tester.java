@@ -27,10 +27,11 @@ public class Tester {
         p.printNode(t.getRoot());
         ThreadedAVLTree t2 = t.clone();
         int size = t.getNumberOfNodes();
+
         System.out.println("\nDelete elements from root");
         int i;
         for (i = 0; i < size; i++) {
-            System.out.println("i=" + i + " root=" + t.getRoot().data + " size=" + t.getNumberOfNodes());
+            System.out.println("i=" + i + " deleteVal=" + t.getRoot().data + " size=" + t.getNumberOfNodes());
             t.delete(t.getRoot().data);
             p.printNode(t.getRoot());
             if (!isValidAVL(t.getRoot())) {
@@ -41,6 +42,7 @@ public class Tester {
             }
         }
         System.out.println("After " + i + " checks. Size = " + t.getNumberOfNodes());
+
 
         System.out.println("\n\nDelete randomly until empty");
         boolean deleted;
@@ -118,7 +120,6 @@ public class Tester {
         System.out.println("\nClone after Insert");
         System.out.println(tclone.preorder());
         p.printNode(tclone.getRoot());
-        p.printNode(tclone.getRoot());
     }
 
     public static void testInOrder(ThreadedAVLTree<Integer> tree) {
@@ -151,6 +152,7 @@ public class Tester {
         }
 
         //TEST CLONE
+        testClone(t1);
         testClone(t2);
 
         //Test Threaded Inorder
@@ -167,8 +169,5 @@ public class Tester {
         System.out.println("\nTEST DELETE");
         testDelete(t1);         //randomly generated case
         testDelete(t2);         //Easy self-setup case
-
-
-
     }
 }

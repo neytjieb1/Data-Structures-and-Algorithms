@@ -620,9 +620,10 @@ public class ThreadedAVLTree<T extends Comparable<? super T>> {
 
         if (out.substring(out.length() - 1).equals(",")) {
             out = out.substring(0, out.length() - 1);
-        } else {
-            out = out.substring(0, out.length() - countUps);
         }
+        /*else {
+            out = out.substring(0, out.length() - countUps);
+        }*/
 
         return out;
 
