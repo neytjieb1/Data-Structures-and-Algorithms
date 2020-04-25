@@ -1,15 +1,12 @@
 /*
-Name and Surname: 
-Student Number: 
+Name and Surname: B Nortier
+Student Number: 17091820
 */
-
-import javax.swing.plaf.TableHeaderUI;
 
 public class ThreadedAVLNode<T extends Comparable<? super T>>
 {
    /*
    TODO: You must implement a node class which would be appropriate to use with your trees.
-   
    You may add methods and data fields. You may NOT alter the given class name or data fields.
    */
    
@@ -33,18 +30,6 @@ public class ThreadedAVLNode<T extends Comparable<? super T>>
 
    public ThreadedAVLNode() {
       this(null,0,false);
-   }
-
-   public void printNodeInfo() {
-      if (this!=null) {
-         System.out.println("Data: " + data);
-         System.out.println("BF: " + balanceFactor);
-         System.out.println("Right : " + right);
-         System.out.println("Left: " + left);
-         System.out.println("Thread: " + hasThread);
-      }
-      else System.out.println("Node is empty");
-      System.out.println(" ");
    }
 
 
