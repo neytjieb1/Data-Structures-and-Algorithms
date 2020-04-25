@@ -21,8 +21,6 @@ public class Tester {
     }
 
     public static void testDelete(ThreadedAVLTree<Integer> t) {
-        BinaryTreePrinter p = new BinaryTreePrinter();
-        p.printNode(t.getRoot());
         ThreadedAVLTree t2 = t.clone();
         int size = t.getNumberOfNodes();
 
@@ -31,7 +29,6 @@ public class Tester {
         for (i = 0; i < size; i++) {
             System.out.println("i=" + i + " deleteVal=" + t.getRoot().data + " size=" + t.getNumberOfNodes());
             t.delete(t.getRoot().data);
-            p.printNode(t.getRoot());
             if (!isValidAVL(t.getRoot())) {
                 throw new ArithmeticException("i: " + i + " tree now invalid. Root = " + t.getRoot());
             }
@@ -62,7 +59,6 @@ public class Tester {
     }
 
     public static void testInsert(ThreadedAVLTree<Integer> t2, Integer[] arr) {
-        BinaryTreePrinter p = new BinaryTreePrinter();
 
         for (int i = 0; i < arr.length; i++) {
             t2.insert(arr[i]);
@@ -70,13 +66,11 @@ public class Tester {
         System.out.println("INSERT ACCORDING TO ARRAY");
         System.out.println("NumNodes: " + t2.getNumberOfNodes());
         System.out.println("Valid: " + isValidAVL(t2.getRoot()));
-        //p.printNode(t2.getRoot());
 
 
     }
 
     public static void testInsert(ThreadedAVLTree<Integer> t1) {
-        BinaryTreePrinter p = new BinaryTreePrinter();
         int numDuples = 0;
         for (int i = 0; i < numChecks; i++) {
             int val = Math.abs(rd.nextInt() % numChecks);
@@ -85,7 +79,6 @@ public class Tester {
             }
             else {
                 System.out.println("Insert: " + val);
-                p.printNode(t1.getRoot());
             }
         }
         System.out.println("\nINSERT Randomly");
@@ -93,31 +86,25 @@ public class Tester {
         System.out.println("NumDuples: " + numDuples);
         System.out.println("NumNodes: " + t1.getNumberOfNodes());
         System.out.println("Valid: " + isValidAVL(t1.getRoot()));
-        p.printNode(t1.getRoot());
     }
 
     public static void testClone(ThreadedAVLTree<Integer> tOriginal) {
-        BinaryTreePrinter p = new BinaryTreePrinter();
         System.out.println("CLONE");
         ThreadedAVLTree<Integer> tclone = tOriginal.clone();
 
         System.out.println("\nOriginal before Insert");
-        p.printNode(tOriginal.getRoot());
         System.out.println(tOriginal.preorder());
 
         System.out.println("\nClone before Insert");
         System.out.println(tclone.preorder());
-        p.printNode(tclone.getRoot());
 
         tOriginal.insert(22);
 
         System.out.println("\nOriginal after insert of 22");
-        p.printNode(tOriginal.getRoot());
         System.out.println(tOriginal.preorder());
 
         System.out.println("\nClone after Insert");
         System.out.println(tclone.preorder());
-        p.printNode(tclone.getRoot());
     }
 
     public static void testInOrder(ThreadedAVLTree<Integer> tree) {
