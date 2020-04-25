@@ -1,6 +1,6 @@
 /*
-Name and Surname: 
-Student Number: 
+Name and Surname: B Nortier
+Student Number: 17091820
 */
 
 import java.io.FileOutputStream;
@@ -64,7 +64,6 @@ public class Tester {
     }
 
     public static void testInsert(ThreadedAVLTree<Integer> t2, Integer[] arr) {
-        BinaryTreePrinter p = new BinaryTreePrinter();
 
         for (int i = 0; i < arr.length; i++) {
             t2.insert(arr[i]);
@@ -72,7 +71,6 @@ public class Tester {
         System.out.println("INSERT ACCORDING TO ARRAY");
         System.out.println("NumNodes: " + t2.getNumberOfNodes());
         System.out.println("Valid: " + isValidAVL(t2.getRoot()));
-        //p.printNode(t2.getRoot());
 
 
     }
@@ -98,28 +96,108 @@ public class Tester {
         p.printNode(t1.getRoot());
     }
 
-    public static void testClone(ThreadedAVLTree<Integer> tOriginal) {
-        BinaryTreePrinter p = new BinaryTreePrinter();
-        System.out.println("CLONE");
-        ThreadedAVLTree<Integer> tclone = tOriginal.clone();
+    public static void testClone(ThreadedAVLTree<Integer> tOriginal, boolean copyConstructorTest, boolean verbose) {
+        ThreadedAVLTree<Integer> tClone = null;
+        if (copyConstructorTest) {
+            tClone = new ThreadedAVLTree<>(tOriginal);
+        }
+        else {
+            tClone = tOriginal.clone();
+        }
 
-        System.out.println("\nOriginal before Insert");
-        p.printNode(tOriginal.getRoot());
-        System.out.println(tOriginal.preorder());
+        if (verbose) System.out.println("\nTEST CLONE");
 
-        System.out.println("\nClone before Insert");
-        System.out.println(tclone.preorder());
-        p.printNode(tclone.getRoot());
+        if (verbose) System.out.println("Random inserts");
+        Random rd = new Random();
+        rd.setSeed(rdSeedVal);
+        for (int i = 0; i < numChecks*2; i++) {
+            int val = Math.abs(rd.nextInt())%(100);
+            if (verbose) System.out.println(i + ": Value to insert: " + val);
+            if (tOriginal.preorder().equals(tClone.preorder())==false) {
+                throw new ArithmeticException("The two trees should be equal before an insertion, but aren't");
+            }
 
-        tOriginal.insert(22);
+            if (tOriginal.contains(val)) {
+                if (verbose) System.out.println("DUPLICATE");
+                continue;
+            }
 
-        System.out.println("\nOriginal after insert of 22");
-        p.printNode(tOriginal.getRoot());
-        System.out.println(tOriginal.preorder());
+            tOriginal.insert(val);
+            if (tOriginal.preorder().equals(tClone.preorder()) ) {
+                throw new ArithmeticException("Trees should be equal. Only inserted "+val+" into original");
+            }
+            if (tClone.contains(val)) {
+                throw new ArithmeticException("tClone should NOT contain " + val);
+            }
 
-        System.out.println("\nClone after Insert");
-        System.out.println(tclone.preorder());
-        p.printNode(tclone.getRoot());
+            tClone.insert(val);
+            if (tOriginal.preorder().equals(tClone.preorder())==false) {
+                throw new ArithmeticException("The two trees should be equal after inserting " + val + " into both.");
+            }
+
+
+        }
+
+
+        System.out.println("Random deletes");
+        int i = 0;
+        while (tOriginal.getNumberOfNodes()!=0) {
+            BinaryTreePrinter p = new BinaryTreePrinter();
+            int val = Math.abs(rd.nextInt())%(100);
+            while (!tOriginal.contains(val)) {
+                val = Math.abs(rd.nextInt())%(100);
+            }
+            if (verbose) {
+                System.out.println(i + ": Value to delete: " + val);
+                p.printNode(tOriginal.getRoot());
+                p.printNode(tClone.getRoot());
+            }
+
+            if (tOriginal.preorder().equals(tClone.preorder())==false) {
+                throw new ArithmeticException("The two trees should be equal before an insertion, but aren't");
+            }
+
+            tOriginal.delete(val);
+            if (tOriginal.preorder().equals(tClone.preorder()) ) {
+                throw new ArithmeticException("Trees should be equal. Only deleted "+val+" from original");
+            }
+            if (!tClone.contains(val)) {
+                throw new ArithmeticException("tClone should contain " + val);
+            }
+            if (verbose) {
+                System.out.println("after deletion from tOriginal");
+                p.printNode(tOriginal.getRoot());
+                p.printNode(tClone.getRoot());
+            }
+            tClone.delete(val);
+            if (tOriginal.preorder().equals(tClone.preorder())==false) {
+                throw new ArithmeticException("The two trees should be equal after deleting " + val + " from both.");
+            }
+            if (verbose) {
+                System.out.println("after deletion from clone. should be equal");
+                p.printNode(tOriginal.getRoot());
+                p.printNode(tClone.getRoot());
+            }
+
+            i++;
+        }
+
+    }
+
+    public static boolean testCopyConstructor(ThreadedAVLTree<Integer> tOriginal, boolean verbose) {
+        if (verbose) {
+            testClone(tOriginal, true, true);
+        }
+        else {
+            try {
+                testClone(tOriginal, true, true);
+            }
+            catch (ArithmeticException ex) {
+                System.out.println(ex);
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void testInOrder(ThreadedAVLTree<Integer> tree) {
@@ -151,9 +229,20 @@ public class Tester {
             testInsert(t2);
         }
 
-        //TEST CLONE
-        testClone(t1);
-        testClone(t2);
+        //Test Threaded Inorder
+        System.out.println("TEST INORDER");
+        testInOrder(t1);
+        testInOrder(t2);
+
+        //Test Threaded PreOrder
+        System.out.println("TEST PREORDER");
+        testPreOrder(t1);
+        testPreOrder(t2);
+
+        //Test Delete
+        System.out.println("\nTEST DELETE");
+        testDelete(t1);         //randomly generated case
+        testDelete(t2);         //Easy self-setup case
 
         //Test Threaded Inorder
         System.out.println("TEST INORDER");
@@ -164,6 +253,25 @@ public class Tester {
         System.out.println("TEST PREORDER");
         testPreOrder(t1);
         testPreOrder(t2);
+
+        //TEST CLONE
+        testClone(t1, false, true);
+        testClone(t2, false, true);
+
+        //TEST COPY-CONSTRUCTOR
+        if (testCopyConstructor(t1, false)) {
+            System.out.println("Copy constructor works for t1");
+        }
+        else {
+            testCopyConstructor(t1, true);
+        }
+        if (testCopyConstructor(t2, false)) {
+            System.out.println("Copy constructor works for t2");
+        }
+        else {
+            testCopyConstructor(t2, true);
+        }
+
 
         //Test Delete
         System.out.println("\nTEST DELETE");
