@@ -229,6 +229,16 @@ public class Tester {
             testInsert(t2);
         }
 
+        ThreadedAVLTree<Integer> t3 = new ThreadedAVLTree<Integer>();
+        ThreadedAVLTree<Integer> t3_clone = t3.clone();
+
+        Integer arr_cl[] = {10};
+        for (int i = 0; i < arr_cl.length; i++) {
+            t3.insert(arr_cl[i]);
+            t3.preorder();
+            t3_clone.preorder();
+        }
+        
         //Test Threaded Inorder
         System.out.println("TEST INORDER");
         testInOrder(t1);
@@ -257,7 +267,6 @@ public class Tester {
         //TEST CLONE
         testClone(t1, false, true);
         testClone(t2, false, true);
-
         //TEST COPY-CONSTRUCTOR
         if (testCopyConstructor(t1, false)) {
             System.out.println("Copy constructor works for t1");
