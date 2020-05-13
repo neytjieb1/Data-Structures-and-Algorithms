@@ -16,7 +16,7 @@ class BTree<T extends Comparable<T>> {
 		if (root != null) 
 		{ 
 			root.print();
-			System.out.println();
+			//System.out.println();
 		} 
 	}
  

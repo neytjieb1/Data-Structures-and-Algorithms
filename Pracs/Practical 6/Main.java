@@ -46,15 +46,20 @@ public class Main {
         Random rd = new Random();
         rd.setSeed(123456);
         int numChecks = 20;
-        int numTestPerCheck = 10;
+        int numTestPerCheck = 20;
         BTree<Integer>  tree = new BTree(0);
         for (int i = 0; i < numChecks; i++) {
-            System.out.println("At Test " + i);
             tree.root = null;
-            tree.m = Math.abs(rd.nextInt() % 7) + 3;
+            tree.m = 2;
+            System.out.println("\nAt Test " + i + " Order: " + tree.m*2);
             for (int j = 0; j < numTestPerCheck; j++) {
                 int insertVal = Math.abs(rd.nextInt() % 100) + 1;
+                if (j==18 && insertVal==27) {
+                    System.out.println('x');
+                }
                 tree.insert(insertVal);
+                System.out.println(j +": " + insertVal);
+                tree.print();
             }
             tree.traverse();
             System.out.println("");

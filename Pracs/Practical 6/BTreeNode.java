@@ -144,8 +144,8 @@ class BTreeNode<T extends Comparable<T>> {
                 refNode.keyTally--;
                 refNode.references[i] = null;
             }
-            rChild.references[keyTally] = refNode.references[keyTally];
-            refNode.references[midIndex] = null;
+            rChild.references[rChild.keyTally] = refNode.references[refNode.keyTally+1];
+            refNode.references[refNode.keyTally+1] = null;
             refNode.keys[midIndex] = null;
             refNode.keyTally--;
 
@@ -159,11 +159,22 @@ class BTreeNode<T extends Comparable<T>> {
 
     private void insertNonFullNode(int i, T val) {
         BTreeNode<T> ref = null;
+        Boolean start = (i==0);
         if (this.keys[i] == val)
             return;
 
         T tempVal = (T) this.keys[i];
         BTreeNode<T> tempRef = references[i];
+
+        //determine if ref should be changed.
+        if (i==0)/* && !references[0].keys[0].equals(val))*/ {
+            keys[i] = val;
+            // ignore references[0]
+            val = tempVal;
+            ref = null;
+            tempVal = (T) keys[++i];
+            tempRef = references[i];
+        }
 
         while (tempVal != null && i < keys.length) {
             keys[i] = val;
@@ -176,6 +187,7 @@ class BTreeNode<T extends Comparable<T>> {
         keys[i++] = val;
         if (tempRef != null) references[i] = tempRef;
         else references[i] = ref;
+        if (start) references[i-1] = ref;
         keyTally++;
 
     }
