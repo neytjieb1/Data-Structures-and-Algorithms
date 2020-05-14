@@ -66,6 +66,10 @@ class BTreeNode<T extends Comparable<T>> {
 
     // Function to insert the given key in tree rooted with this node
     public BTreeNode<T> insert(T key) {
+        if (this.search(key) != null) {
+            return this;
+        }
+
         // Your code goes here
         if (this.keyTally == this.keys.length) {  //if full: (will only happen with root)
             this.split(-1);
@@ -192,6 +196,7 @@ class BTreeNode<T extends Comparable<T>> {
 
     }
 
+    //(place where to start insertion is also index of reference)
     private int findInfimum(T key) {
         int i = 0;
         while (this.keys[i] != null && key.compareTo((T) this.keys[i]) > 0) ++i;
@@ -206,11 +211,11 @@ class BTreeNode<T extends Comparable<T>> {
         for (int i = 0; i < this.keyTally; i++) {
             if (key==this.keys[i]) return this;
             else if (key.compareTo((T)this.keys[i]) < 0) {
-                return references[i].search(key);
+                if (references[i]==null) return null;
+                else return references[i].search(key);
             }
             // else key > this.keys[i] so do nothing
         }
-
         //went all the way through, one remaining case
         if (references[keyTally]==null) return null;
         else return references[keyTally].search(key);
