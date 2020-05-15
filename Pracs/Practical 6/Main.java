@@ -7,10 +7,10 @@ public class Main {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-//        PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Practical 6/outputB.txt"));
-//        System.setOut(out);
+       /* PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Practical 6/outputB.txt"));
+        System.setOut(out);*/
 
-        BTree<Integer> t = new BTree<Integer>(2); // A B-Tree with order 4 (2*m)
+/*        BTree<Integer> t = new BTree<Integer>(2); // A B-Tree with order 4 (2*m)
 
         t.insert(20);
         t.insert(10);
@@ -23,64 +23,48 @@ public class Main {
         t.insert(80);
 
 
-        System.out.println("Search the constucted tree for 80: ");
+        System.out.println("Search the constructed tree for 80: ");
         BTreeNode result = t.search(80);
         if (result != null)
             System.out.println("Found in node " + result);
         else
             System.out.println("Not found!");
 
-        System.out.println("Search the constucted tree for 100: ");
+        System.out.println("Search the constructed tree for 100: ");
         result = t.search(100);
         if (result != null)
             System.out.println("Found in node " + result);
         else
             System.out.println("Not found!");
 
-        System.out.println("Traversal of the constucted tree is : ");
+        System.out.println("Traversal of the constructed tree is : ");
         t.traverse();
-        System.out.println("Structure of the constucted tree is : ");
-        t.print();
+        System.out.println("Structure of the constructed tree is : ");
+        t.print();*/
 
 
         Random rd = new Random();
-        rd.setSeed(123456);
-        int numChecks = 20;
-        int numTestPerCheck = 20;
+        //rd.setSeed(123456);
+        int numChecks = 100;
+        int numTestPerCheck = 100;
         BTree<Integer>  tree = new BTree(0);
         for (int i = 0; i < numChecks; i++) {
             tree.root = null;
-            tree.m = 2;
-            System.out.println("\nAt Test " + i + " Order: " + tree.m*2);
+            tree.m = Math.abs(rd.nextInt())%3+2;
+            //System.out.println("\nAt Test " + i + " Order: " + tree.m + "*2");
             for (int j = 0; j < numTestPerCheck; j++) {
-                int insertVal = Math.abs(rd.nextInt() % 100) + 1;
-                if (j==18 && insertVal==27) {
-                    System.out.println('x');
-                }
+                int insertVal = Math.abs(rd.nextInt() % 10000) + 1;
                 tree.insert(insertVal);
-                System.out.println(j +": " + insertVal);
-                tree.print();
+                //System.out.println(j +": " + insertVal);
+                //tree.print();
+                tree.traverse();
             }
-            tree.traverse();
-            System.out.println("");
+            //tree.traverse();
+            //System.out.println("");
         }
 
-	/* Expected Output:
-	Search the constucted tree for 80:
-	Found in node [70,80,90]
-	Search the constucted tree for 100:
-	Not found!
-	Traversal of the constucted tree is :
-	 10 20 30 40 50 60 70 80 90
-	Structure of the constucted tree is :
-	Level 1 [ 40]
-	Level 2 [ 20]
-	Level 3 [ 10]
-	Level 3 [ 30]
-	Level 2 [ 60]
-	Level 3 [ 50]
-	Level 3 [ 70 80 90]
-	*/
+
+
     }
 
 

@@ -141,15 +141,17 @@ class BTreeNode<T extends Comparable<T>> {
             BTreeNode<T> rChild = new BTreeNode<T>(m, refNode.leaf);
 
             //move values to right child
+            int numMoveValues = refNode.keyTally - (midIndex+1);
             for (int i = midIndex + 1; i < refNode.keyTally; i++) {
                 rChild.insertNonFullNode(i - (midIndex + 1), (T) refNode.keys[i]);
                 rChild.references[i - (midIndex + 1)] = refNode.references[i];
                 refNode.keys[i] = null;
-                refNode.keyTally--;
+                //refNode.keyTally--;
                 refNode.references[i] = null;
             }
-            rChild.references[rChild.keyTally] = refNode.references[refNode.keyTally+1];
-            refNode.references[refNode.keyTally+1] = null;
+            refNode.keyTally = refNode.keyTally - numMoveValues;
+            rChild.references[rChild.keyTally] = refNode.references[refNode.keyTally+numMoveValues];
+            refNode.references[refNode.keyTally+numMoveValues] = null;
             refNode.keys[midIndex] = null;
             refNode.keyTally--;
 
@@ -180,7 +182,7 @@ class BTreeNode<T extends Comparable<T>> {
             tempRef = references[i];
         }
 
-        while (tempVal != null && i < keys.length) {
+        while (tempVal != null && i < keys.length+1) {
             keys[i] = val;
             references[i] = ref;
             val = tempVal;
@@ -188,11 +190,16 @@ class BTreeNode<T extends Comparable<T>> {
             tempVal = (T) keys[++i];
             tempRef = references[i];
         }
+        references[i] = ref;
         keys[i++] = val;
-        if (tempRef != null) references[i] = tempRef;
+        keyTally++;
+        if (tempRef!=null) references[i] = tempRef;
+        if (start) references[i-1] = ref;
+
+        /*if (tempRef != null) references[i] = tempRef;
         else references[i] = ref;
         if (start) references[i-1] = ref;
-        keyTally++;
+        keyTally++;*/
 
     }
 
