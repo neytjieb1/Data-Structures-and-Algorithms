@@ -149,6 +149,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		// Your code goes here
 		if (this.isLeaf() && this.keyTally<m-1) {
 			this.insertNonFulLeafNode(key, value);
+			return this;
 		}
 
 		else if (this.isLeaf() && this.keyTally==(m-1) && this.parentNode==null) { 		//ie it's the root
@@ -176,9 +177,41 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			//cast to inner to find child
 			BPTreeInnerNode<TKey, TValue> tempInner = (BPTreeInnerNode<TKey,TValue>) this;
 			//insert into child
-			tempInner.getChild(tempInner.findIndexOf(key)).insert(key, value);
+			BPTreeNode<TKey, TValue> temp = tempInner.getChild(tempInner.findIndexOf(key)).insert(key, value);
+			if (temp.parentNode!=null) return temp.parentNode;
+			else return temp;
 		}
-		return this;
+	}
+
+	protected void insertNonFullInnerNode(TKey key, int i ) {
+		BPTreeInnerNode<TKey, TValue> tempInner = (BPTreeInnerNode<TKey, TValue>) this;
+		TKey tempKey = (TKey) (this).keys[i];
+		Object tempRef = ((BPTreeInnerNode<TKey, TValue>) this).references[i];
+		Object ref = null;
+		Boolean start = (i==0);
+
+		if (i==0) {
+			keys[i] = key;
+			// ignore references[0]
+			key = tempKey;
+			ref = null;
+			tempKey = (TKey) (this).keys[++i];;
+			tempRef = ((BPTreeInnerNode<TKey, TValue>) this).references[i];
+		}
+
+		while (tempKey != null && i < keys.length+1) {
+			keys[i] = key;
+			((BPTreeInnerNode<TKey, TValue>) this).references[i] = ref;
+			key = tempKey;
+			ref = tempRef;
+			tempKey = (TKey) (this).keys[++i];;
+			tempRef = ((BPTreeInnerNode<TKey, TValue>) this).references[i];
+		}
+		((BPTreeInnerNode<TKey, TValue>) this).references[i] = ref;
+		this.keys[i++] = key;
+		//keyTally++;
+		if (tempRef!=null) ((BPTreeInnerNode<TKey, TValue>) this).references[i] = tempRef;
+		if (start) ((BPTreeInnerNode<TKey, TValue>) this).references[i-1] = ref;
 	}
 
 	protected void insertNonFulLeafNode(TKey key, TValue val) {
@@ -213,28 +246,40 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 
 	}
 
+
+
 	protected BPTreeNode<TKey,TValue> splitInsideNode(BPTreeNode<TKey,TValue> node) {
 		//happens at root or inside node
 		//1. Create rChild
 		BPTreeNode<TKey, TValue> rChild;
-		if (this.isLeaf()) {
+		if (node.isLeaf()) {
 			rChild = new BPTreeLeafNode<>(m);
 		}
 		else {
 			rChild = new BPTreeInnerNode<>(m);
 		}
 		//2. Move data over to rChild
-		redistributeData(this, rChild);
+		redistributeData(node, rChild);
 		//3. create Parent
 		BPTreeInnerNode<TKey, TValue> parent = new BPTreeInnerNode<>(this.m);
 		//4. Insert index key
-		parent.keys[0] = rChild.keys[0];
-		parent.keyTally++;
+		if (node.isLeaf()) {
+			parent.keys[0] = rChild.keys[0];
+			parent.keyTally++;
+		}
+		else {
+			parent.keys[0] = node.keys[node.keyTally-1];
+			node.keys[node.keyTally-1] = null;
+			parent.keyTally++;
+			node.keyTally--;
+		}
 		//5. Update links
-		parent.references[0] = this;
-		this.parentNode = parent;
+		parent.references[0] = node;
+		node.parentNode = parent;
 		parent.references[1] = rChild;
-		updateLinks(this, rChild,parent);
+		if (node.isLeaf()) {
+			updateLinks(node, rChild, parent);
+		}
 		//6. return parent
 		return parent;
 
@@ -266,6 +311,9 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 				node.keys[i] = null;
 				((BPTreeInnerNode<TKey, TValue>)node).references[i] = null;
 			}
+			((BPTreeInnerNode<TKey, TValue>)rChild).references[numMoveValues] = ((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally];
+			((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally] = null;
+			//node.keys[midIndex] = null;
 		}
 		rChild.keyTally = rChild.keyTally+numMoveValues;
 		node.keyTally = node.keyTally-numMoveValues;
@@ -284,10 +332,15 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 	protected BPTreeNode<TKey,TValue> addRChildToParent(TKey key, TValue value, BPTreeNode<TKey,TValue> node) {
 		//1. Get index
 		int i = ((BPTreeInnerNode<TKey,TValue>)node.parentNode).findIndexOf(key);
+
 		//2. Add (originally thought to move up?
-		((BPTreeInnerNode<TKey,TValue>)node.parentNode).references[i+1] = node.rightSibling;  //node.rightSibling already defined
+		if (i!=parentNode.keyTally) {
+			parentNode.insertNonFullInnerNode(key, i);
+		}
+		((BPTreeInnerNode<TKey, TValue>) node.parentNode).references[i + 1] = node.rightSibling;  //node.rightSibling already defined
 		parentNode.keys[i] = node.rightSibling.keys[0];   //is this necessary?
-		parentNode.keyTally++;								//is this necessary
+		parentNode.keyTally++;                                //is this necessary
+
 		//3. Check if parent now overfull
 		if (this.parentNode.keyTally == m) {
 			BPTreeNode<TKey, TValue> newParent = splitInsideNode(this.parentNode);

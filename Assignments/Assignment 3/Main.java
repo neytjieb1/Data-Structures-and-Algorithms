@@ -1,32 +1,64 @@
+import java.util.Random;
+
 public class Main {
-	public static void printArrOfValues(BPTree<Integer, Integer> tree) {
-		Object[] arr = tree.values();
-		for (int i = 0; i < arr.length; i++) {
-			System.out.print( (Integer)arr[i] + " ");
-		}
-	}
+    public static void printArrOfValues(BPTree<Integer, Integer> tree) {
+        Object[] arr = tree.values();
+        System.out.println("Size=" + arr.length);
+        /*for (int i = 0; i < arr.length; i++) {
+            System.out.print((Integer) arr[i] + " ");
+        }
+        System.out.println(" ");*/
+    }
 
-    public static void main(String[] args) 
-    {
-	//General tree
-	BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-   
-	tree.insert(20, 5000);
-	tree.insert(10, 1000);
-	tree.insert(30, 9000);
-	tree.insert(50, 8000);
-	tree.insert(40, 2000);
-	tree.insert(60, 7000);
-	tree.insert(90, 3000);
-	tree.insert(70, 6000);
-	tree.insert(80, 4000);
-	tree.print();
+    public static void main(String[] args) {
+        //General tree
+        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
+        Integer[] keys = {20, 10, 30, 50, 40, 60, 90, 70, 80, 100};
+        Integer[] values = {5000, 1000, 9000, 8000, 2000, 70000, 3000, 6000, 4000, 4500};
+        for (int i = 0; i < keys.length; i++) {
+            System.out.println("\ni=" + (i) + " Insert: " + keys[i] + ", " + values[i]);
+            tree.insert(keys[i], values[i]);
+            printArrOfValues(tree);
+            //tree.print();
 
-	printArrOfValues(tree);
+        }
+
+        //printArrOfValues(tree);
+
+        Random rd = new Random();
+        rd.setSeed(123456987);
+        int numInserts = 20;
+        for (int i = 0; i < numInserts; i++) {
+            int key = Math.abs(rd.nextInt()) % 100 + 1;
+            int val = Math.abs(rd.nextInt()) % 10000 + 1;
+            tree.insert(key, val);
+            System.out.println("\ni=" + (i+10) + " Insert: " + key + ", " + val);
+            printArrOfValues(tree);
+            //tree.print();
+        }
+
 
 	/*
 
 
+	tree.insert(20, 5000);
+		tree.print();
+	tree.insert(10, 1000);
+		tree.print();
+	tree.insert(30, 9000);
+		tree.print();
+	tree.insert(50, 8000);
+		tree.print();
+	tree.insert(40, 2000);
+		tree.print();
+	tree.insert(60, 7000);
+		tree.print();
+	tree.insert(90, 3000);
+		tree.print();
+	tree.insert(70, 6000);
+		tree.print();
+	tree.insert(80, 4000);
+	tree.print();
 
 
 
@@ -200,5 +232,4 @@ public class Main {
     }
 
 
-    
 }
