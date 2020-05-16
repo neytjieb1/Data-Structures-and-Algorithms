@@ -4,15 +4,16 @@ public class Main {
     public static void printArrOfValues(BPTree<Integer, Integer> tree) {
         Object[] arr = tree.values();
         System.out.println("Size=" + arr.length);
-        /*for (int i = 0; i < arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             System.out.print((Integer) arr[i] + " ");
         }
-        System.out.println(" ");*/
+        System.out.println(" ");
     }
 
     public static void main(String[] args) {
+
         //General tree
-        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
+/*        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
         Integer[] keys = {20, 10, 30, 50, 40, 60, 90, 70, 80, 100};
         Integer[] values = {5000, 1000, 9000, 8000, 2000, 70000, 3000, 6000, 4000, 4500};
         for (int i = 0; i < keys.length; i++) {
@@ -20,21 +21,24 @@ public class Main {
             tree.insert(keys[i], values[i]);
             printArrOfValues(tree);
             //tree.print();
+        }*/
 
-        }
 
-        //printArrOfValues(tree);
-
+        //Random Treee
+        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
         Random rd = new Random();
         rd.setSeed(123456987);
         int numInserts = 20;
         for (int i = 0; i < numInserts; i++) {
             int key = Math.abs(rd.nextInt()) % 100 + 1;
-            int val = Math.abs(rd.nextInt()) % 10000 + 1;
+            int val = key*1;
+            if (i==14 || i==9) {
+                System.out.println('x');
+            }
             tree.insert(key, val);
-            System.out.println("\ni=" + (i+10) + " Insert: " + key + ", " + val);
+            System.out.println("\ni=" + (i) + " Insert: " + key + ", " + val);
             printArrOfValues(tree);
-            //tree.print();
+            tree.print();
         }
 
 

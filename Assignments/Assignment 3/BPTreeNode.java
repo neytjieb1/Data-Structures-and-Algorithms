@@ -272,6 +272,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			node.keys[node.keyTally-1] = null;
 			parent.keyTally++;
 			node.keyTally--;
+
 		}
 		//5. Update links
 		parent.references[0] = node;
@@ -279,6 +280,9 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		parent.references[1] = rChild;
 		if (node.isLeaf()) {
 			updateLinks(node, rChild, parent);
+		}
+		else { //make sure all children see parent
+			rChild.parentNode = parent;
 		}
 		//6. return parent
 		return parent;
@@ -313,7 +317,6 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			}
 			((BPTreeInnerNode<TKey, TValue>)rChild).references[numMoveValues] = ((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally];
 			((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally] = null;
-			//node.keys[midIndex] = null;
 		}
 		rChild.keyTally = rChild.keyTally+numMoveValues;
 		node.keyTally = node.keyTally-numMoveValues;
@@ -323,6 +326,9 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 	protected void updateLinks(BPTreeNode<TKey,TValue> lChild, BPTreeNode<TKey,TValue> rChild, BPTreeNode<TKey,TValue> parentNode) {
 		//must work for leaves and non-leaves
 		rChild.rightSibling = lChild.rightSibling;
+		if (lChild.rightSibling != null) {
+			lChild.rightSibling.leftSibling = rChild;
+		}
 		lChild.rightSibling = rChild;
 		rChild.leftSibling = lChild;
 		rChild.parentNode = lChild.parentNode;
@@ -333,7 +339,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		//1. Get index
 		int i = ((BPTreeInnerNode<TKey,TValue>)node.parentNode).findIndexOf(key);
 
-		//2. Add (originally thought to move up?
+		//2. Add
 		if (i!=parentNode.keyTally) {
 			parentNode.insertNonFullInnerNode(key, i);
 		}
@@ -344,6 +350,15 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		//3. Check if parent now overfull
 		if (this.parentNode.keyTally == m) {
 			BPTreeNode<TKey, TValue> newParent = splitInsideNode(this.parentNode);
+			//update links of children to parent
+			BPTreeNode<TKey, TValue> temp = ((BPTreeInnerNode<TKey,TValue>)newParent).getChild(1);
+			for (int j = 0; j < temp.keyTally+1; j++) {
+				if(!temp.isLeaf()) {
+					BPTreeNode<TKey,TValue> t = ((BPTreeInnerNode<TKey, TValue>)temp).getChild(j);
+					t.parentNode = newParent;
+				}
+			}
+
 			return newParent;
 		}
 		else return this.parentNode;
@@ -414,7 +429,6 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		}
 		//5. Return
 		return (TValue[]) arrValues;
-
 
 	}
 
