@@ -28,17 +28,18 @@ public class Main {
         BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
         Random rd = new Random();
         rd.setSeed(123456987);
-        int numInserts = 20;
+        int numInserts = 50;
         for (int i = 0; i < numInserts; i++) {
             int key = Math.abs(rd.nextInt()) % 100 + 1;
             int val = key*1;
-            if (i==14 || i==9) {
+            if (i==32) {
                 System.out.println('x');
             }
             tree.insert(key, val);
             System.out.println("\ni=" + (i) + " Insert: " + key + ", " + val);
-            printArrOfValues(tree);
             tree.print();
+            printArrOfValues(tree);
+
         }
 
 

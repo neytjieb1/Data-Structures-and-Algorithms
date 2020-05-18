@@ -169,7 +169,9 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			//5. add middle value to parent (will check if parent is overfull)
 			BPTreeNode<TKey, TValue> newRoot;
 			newRoot = addRChildToParent(key, value, this);
-			//6. return parent node
+			//6. Check Overfull
+
+			//7. return parent node
 			return newRoot;
 		}
 
@@ -260,31 +262,42 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		}
 		//2. Move data over to rChild
 		redistributeData(node, rChild);
-		//3. create Parent
-		BPTreeInnerNode<TKey, TValue> parent = new BPTreeInnerNode<>(this.m);
-		//4. Insert index key
-		if (node.isLeaf()) {
-			parent.keys[0] = rChild.keys[0];
-			parent.keyTally++;
+		//3. create Parent or add to parent
+		BPTreeInnerNode<TKey, TValue> parent;
+		if (node.parentNode == null) {
+			 parent = new BPTreeInnerNode<>(this.m);
 		}
 		else {
-			parent.keys[0] = node.keys[node.keyTally-1];
-			node.keys[node.keyTally-1] = null;
-			parent.keyTally++;
-			node.keyTally--;
-
+			parent = ((BPTreeInnerNode<TKey, TValue>)node.parentNode);
 		}
-		//5. Update links
-		parent.references[0] = node;
-		node.parentNode = parent;
-		parent.references[1] = rChild;
+
+		//4. Insert index key
+		if (node.parentNode==null) {
+			parent.keys[0] = rChild.keys[0];
+			parent.keyTally++;
+			parent.references[0] = node;
+			parent.references[1] = rChild;
+		}
+		else {
+			int i = ((BPTreeInnerNode<TKey, TValue>) node.parentNode).findIndexOf((TKey) rChild.keys[0]);
+			parent.insertNonFullInnerNode((TKey)rChild.keys[0], i);
+			parent.keyTally++;
+			if (parent.references[i+1]!=null) {
+				parent.references[i] = parent.references[i + 1];
+			}
+			parent.references[i+1] = rChild;  //node.rightSibling already defined
+		}
+		if (!node.isLeaf()) {
+			node.keys[node.keyTally-1] = null;
+			node.keyTally--;
+		}
 		if (node.isLeaf()) {
 			updateLinks(node, rChild, parent);
 		}
-		else { //make sure all children see parent
-			rChild.parentNode = parent;
-		}
-		//6. return parent
+
+		node.parentNode = parent;
+		rChild.parentNode = parent;
+
 		return parent;
 
 	}
@@ -332,7 +345,6 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		lChild.rightSibling = rChild;
 		rChild.leftSibling = lChild;
 		rChild.parentNode = lChild.parentNode;
-		//update parent's references? Can work out indices, but will be done otherwhere
 	}
 
 	protected BPTreeNode<TKey,TValue> addRChildToParent(TKey key, TValue value, BPTreeNode<TKey,TValue> node) {
@@ -344,32 +356,27 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			parentNode.insertNonFullInnerNode(key, i);
 		}
 		((BPTreeInnerNode<TKey, TValue>) node.parentNode).references[i + 1] = node.rightSibling;  //node.rightSibling already defined
+		((BPTreeInnerNode<TKey, TValue>) node.parentNode).references[i] = node;
 		parentNode.keys[i] = node.rightSibling.keys[0];   //is this necessary?
 		parentNode.keyTally++;                                //is this necessary
 
 		//3. Check if parent now overfull
 		if (this.parentNode.keyTally == m) {
-			BPTreeNode<TKey, TValue> newParent = splitInsideNode(this.parentNode);
-			//update links of children to parent
-			BPTreeNode<TKey, TValue> temp = ((BPTreeInnerNode<TKey,TValue>)newParent).getChild(1);
-			for (int j = 0; j < temp.keyTally+1; j++) {
-				if(!temp.isLeaf()) {
-					BPTreeNode<TKey,TValue> t = ((BPTreeInnerNode<TKey, TValue>)temp).getChild(j);
-					t.parentNode = newParent;
+			BPTreeNode<TKey, TValue> newParent = this.parentNode;
+			while (newParent.keyTally == m) {
+				newParent = splitInsideNode(newParent);
+				//update links of children to parent
+				BPTreeNode<TKey, TValue> temp = ((BPTreeInnerNode<TKey, TValue>) newParent).getChild(newParent.keyTally);
+				for (int j = 0; j < temp.keyTally + 1; j++) {
+					if (!temp.isLeaf()) {
+						BPTreeNode<TKey, TValue> t = ((BPTreeInnerNode<TKey, TValue>) temp).getChild(j);
+						t.parentNode = temp;
+					}
 				}
 			}
-
 			return newParent;
 		}
 		else return this.parentNode;
-
-		/*  WHY DID I WANT TO DO THIS?
-		find index of parent key   //findInfimum(parent, key)
-            //so parent.references[i+1] must point to rChild
-    	for (i+1 to keyTally) in parent
-        move up keys and add tempKey (which starts out as 1st key in rChild)
-        move up references and add tempRef (which starts as rChild)
-		*/
 	}
 
 
