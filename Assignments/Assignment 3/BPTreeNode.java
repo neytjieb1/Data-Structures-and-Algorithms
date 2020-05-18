@@ -204,16 +204,30 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		while (tempKey != null && i < keys.length+1) {
 			keys[i] = key;
 			((BPTreeInnerNode<TKey, TValue>) this).references[i] = ref;
+			if (ref!=null) {
+				((BPTreeInnerNode<TKey, TValue>) this).getChild(i).parentNode = this;
+			}
 			key = tempKey;
 			ref = tempRef;
 			tempKey = (TKey) (this).keys[++i];;
 			tempRef = ((BPTreeInnerNode<TKey, TValue>) this).references[i];
 		}
 		((BPTreeInnerNode<TKey, TValue>) this).references[i] = ref;
+		if (ref!=null) {
+			((BPTreeInnerNode<TKey, TValue>) this).getChild(i).parentNode = this;
+		}
 		this.keys[i++] = key;
 		//keyTally++;
-		if (tempRef!=null) ((BPTreeInnerNode<TKey, TValue>) this).references[i] = tempRef;
-		if (start) ((BPTreeInnerNode<TKey, TValue>) this).references[i-1] = ref;
+		if (tempRef!=null) {
+			((BPTreeInnerNode<TKey, TValue>) this).references[i] = tempRef;
+			((BPTreeInnerNode<TKey, TValue>) this).getChild(i).parentNode = this ;
+		}
+		if (start) {
+			((BPTreeInnerNode<TKey, TValue>) this).references[i-1] = ref;
+			if (ref!=null) {
+				((BPTreeInnerNode<TKey, TValue>) this).getChild(i - 1).parentNode = this;
+			}
+		}
 	}
 
 	protected void insertNonFulLeafNode(TKey key, TValue val) {
@@ -276,7 +290,9 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			parent.keys[0] = rChild.keys[0];
 			parent.keyTally++;
 			parent.references[0] = node;
+			parent.getChild(0).parentNode = parent;
 			parent.references[1] = rChild;
+			parent.getChild(1).parentNode = parent;
 		}
 		else {
 			int i = ((BPTreeInnerNode<TKey, TValue>) node.parentNode).findIndexOf((TKey) rChild.keys[0]);
@@ -284,12 +300,21 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			parent.keyTally++;
 			if (parent.references[i+1]!=null) {
 				parent.references[i] = parent.references[i + 1];
+				parent.getChild(i).parentNode = parent;
 			}
 			parent.references[i+1] = rChild;  //node.rightSibling already defined
+			rChild.parentNode = parent;
 		}
 		if (!node.isLeaf()) {
-			node.keys[node.keyTally-1] = null;
-			node.keyTally--;
+			rChild.keys[0] = null;
+			rChild.keyTally--;
+			for (int i = 0; i <= rChild.keyTally; i++) {
+				rChild.setKey(i, (TKey)rChild.keys[i+1]);
+				((BPTreeInnerNode<TKey,TValue>)rChild).references[i] = ((BPTreeInnerNode<TKey,TValue>)rChild).references[i+1];
+				((BPTreeInnerNode<TKey, TValue>) rChild).getChild(i).parentNode = rChild;
+			}
+			rChild.keys[keyTally] = null;
+			((BPTreeInnerNode<TKey,TValue>)rChild).references[keyTally] = null;
 		}
 		if (node.isLeaf()) {
 			updateLinks(node, rChild, parent);
@@ -323,13 +348,14 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 		else {
 			for (int i = midIndex; i < node.keyTally; i++) {
 				rChild.keys[i-midIndex] = node.keys[i];
-				((BPTreeInnerNode<TKey, TValue>)rChild).references[i-midIndex] = ((BPTreeInnerNode<TKey, TValue>)node).references[i];
+				((BPTreeInnerNode<TKey, TValue>)rChild).references[i-midIndex+1] = ((BPTreeInnerNode<TKey, TValue>)node).references[i+1];
+				((BPTreeInnerNode<TKey, TValue>)rChild).getChild(i-midIndex+1).parentNode = rChild;
 
 				node.keys[i] = null;
-				((BPTreeInnerNode<TKey, TValue>)node).references[i] = null;
+				((BPTreeInnerNode<TKey, TValue>)node).references[i+1] = null;
 			}
-			((BPTreeInnerNode<TKey, TValue>)rChild).references[numMoveValues] = ((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally];
-			((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally] = null;
+			//((BPTreeInnerNode<TKey, TValue>)rChild).references[numMoveValues] = ((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally];
+			//((BPTreeInnerNode<TKey, TValue>)node).references[node.keyTally] = null;
 		}
 		rChild.keyTally = rChild.keyTally+numMoveValues;
 		node.keyTally = node.keyTally-numMoveValues;
@@ -356,6 +382,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 			parentNode.insertNonFullInnerNode(key, i);
 		}
 		((BPTreeInnerNode<TKey, TValue>) node.parentNode).references[i + 1] = node.rightSibling;  //node.rightSibling already defined
+		node.rightSibling.parentNode = node.parentNode;
 		((BPTreeInnerNode<TKey, TValue>) node.parentNode).references[i] = node;
 		parentNode.keys[i] = node.rightSibling.keys[0];   //is this necessary?
 		parentNode.keyTally++;                                //is this necessary

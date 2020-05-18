@@ -1,3 +1,6 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Random;
 
 public class Main {
@@ -10,8 +13,9 @@ public class Main {
         System.out.println(" ");
     }
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws FileNotFoundException {
+         PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass3/outputB.txt"));
+        System.setOut(out);
         //General tree
 /*        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
         Integer[] keys = {20, 10, 30, 50, 40, 60, 90, 70, 80, 100};
@@ -28,13 +32,10 @@ public class Main {
         BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
         Random rd = new Random();
         rd.setSeed(123456987);
-        int numInserts = 50;
+        int numInserts = 200;
         for (int i = 0; i < numInserts; i++) {
             int key = Math.abs(rd.nextInt()) % 100 + 1;
             int val = key*1;
-            if (i==32) {
-                System.out.println('x');
-            }
             tree.insert(key, val);
             System.out.println("\ni=" + (i) + " Insert: " + key + ", " + val);
             tree.print();
