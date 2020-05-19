@@ -1,8 +1,13 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 public class Main {
 
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) throws FileNotFoundException {
+		//PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Practical 7/outputB.txt"));
+		//System.setOut(out);
 		char[] letters = {'E', 'Q', 'R', 'T', 'W', 'Y'};
 		Trie trie = new Trie(letters);
 			
@@ -12,7 +17,7 @@ public class Main {
 		trie.insert("TYRE");
 		trie.insert("YET");
 		trie.insert("EYE");
-		trie.print(false);
+		trie.print(true);
 		System.out.println();
 
 		trie.insert("YEW");
@@ -22,11 +27,26 @@ public class Main {
 		trie.insert("EWER");
 		trie.print(false);
 
-		/*
-	System.out.println(trie.contains("WHERE"));
+		System.out.println("TESTING FALSE INPUTS");
+		System.out.println(trie.contains("WHERE")); //false
+		System.out.println(trie.contains("YER")); //false
+		System.out.println(trie.contains("YEQ")); //false
+		System.out.println(trie.contains("JEW")); //false
+		System.out.println(trie.contains("YUQ"));
+
+		System.out.println("TESTING TRUE INPUTS");
 		System.out.println(trie.contains("TERRY"));
-		System.out.println(trie.contains("JEW"));
 		System.out.println(trie.contains("EWE"));
+		System.out.println(trie.contains("WERE"));
+		System.out.println(trie.contains("TYRE"));
+		System.out.println(trie.contains("YET"));
+		System.out.println(trie.contains("EYE"));
+		System.out.println(trie.contains("YEW"));
+		System.out.println(trie.contains("ERR"));
+		System.out.println(trie.contains("EWER"));
+
+		/*
+
 
 		trie.printKeyList();		*/
 

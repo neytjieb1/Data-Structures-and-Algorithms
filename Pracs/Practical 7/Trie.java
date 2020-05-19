@@ -134,21 +134,42 @@ public class Trie {
         Node p = root;
         char[] K = key.toCharArray();
         while (!p.isLeaf) {
-            //end of word
+            if (p.ptrs[0] != null && i==K.length) {
+                p = p.ptrs[0];
+                if (p.key == key) return true;
+            }
+
             if (p.ptrs[0] != null && p.ptrs[0].equals(key)) {
                 return true;
-            } else if (i == key.length() - 1) {
-                if (p.ptrs[0] != null && p.ptrs[0].equals(key)) return true;
-                else return false;
-            } else if (p.ptrs[index(K[i])] == null) {
+            }
+            //letter not in alphabet
+            else if (index(K[i])==-1) {
                 return false;
-            } else {
+            }
+            //this word not contained in alphabet
+            else if (p.ptrs[index(K[i])] == null) {
+                return false;
+            }
+            //has word in # part equalling key?
+            else if (i == key.length()) {
+                if (p.ptrs[0] != null && p.ptrs[0].equals(key)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+             else {
                 p = p.ptrs[index(K[i])];
                 i++;
             }
         }
-        return false;
-
+        if (p.key == key) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 
