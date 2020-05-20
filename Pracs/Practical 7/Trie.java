@@ -106,7 +106,7 @@ public class Trie {
                     p.ptrs[index(K[i])] = tempNonLeaf;
                     p = tempNonLeaf;
                     i++;
-                } while (i < K_leaf_key.length() && K[i] == K_leaf[i]);   //is this enough?
+                } while (i < K_leaf_key.length() && i<K.length && K[i] == K_leaf[i]);   //is this enough?
                 if (i == key.length()) {
                     p.endOfWord = true;
                     p.ptrs[0] = new Node(key, numPtrs);
@@ -134,7 +134,7 @@ public class Trie {
         Node p = root;
         char[] K = key.toCharArray();
         while (!p.isLeaf) {
-            if (p.ptrs[0] != null && i==K.length) {
+            if (p.ptrs[0] != null && i == K.length) {
                 p = p.ptrs[0];
                 if (p.key == key) return true;
             }
@@ -143,7 +143,7 @@ public class Trie {
                 return true;
             }
             //letter not in alphabet
-            else if (index(K[i])==-1) {
+            else if (index(K[i]) == -1) {
                 return false;
             }
             //this word not contained in alphabet
@@ -154,20 +154,17 @@ public class Trie {
             else if (i == key.length()) {
                 if (p.ptrs[0] != null && p.ptrs[0].equals(key)) {
                     return true;
-                }
-                else {
+                } else {
                     return false;
                 }
-            }
-             else {
+            } else {
                 p = p.ptrs[index(K[i])];
                 i++;
             }
         }
         if (p.key == key) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -175,9 +172,28 @@ public class Trie {
 
     // Function to print all the keys in the trie in alphabetical order.
     public void printKeyList() {
-
         // Your code goes here
+        if (this.root == null) return;
+        else if (this.root.isLeaf) {
+            System.out.print(root.key);
+            return;
+        } else {
+            for (int i = 0; i < numPtrs; i++) {
+                if (this.root.ptrs[i] == null) continue;
+                else printPtr(this.root.ptrs[i]);
+            }
+        }
+    }
 
+    public void printPtr(Node node) {
+        if (node.isLeaf) {
+            System.out.print(node.key + " ");
+        } else {
+            for (int i = 0; i < numPtrs; i++) {
+                if (node.ptrs[i]==null) continue;
+                else printPtr(node.ptrs[i]);
+            }
+        }
     }
 
 

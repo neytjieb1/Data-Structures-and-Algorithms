@@ -3,11 +3,32 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 public class Main {
+	public static void testContains(Trie trie) {
+		System.out.println("TESTING FALSE INPUTS");
+		String[] arrFalse = {"WHERE","YER","YEQ","JEW","YUQ", "QQQQ", "QQQQQQ"};
+		int i;
+		for (i = 0; i < arrFalse.length; i++) {
+			if (trie.contains(arrFalse[i])) {
+				System.out.println("Failed. Must be false: " + arrFalse[i]);
+				break;
+			}
+		}
+		if (i==arrFalse.length) System.out.println("Success");
+		System.out.println("TESTING TRUE INPUTS");
+		String[] arrTrue = {"TERRY", "EWE", "WERE","TYRE", "YET", "EYE", "YEW", "ERR", "EWER", "QQQ", "QQE"};
+		for (i = 0; i < arrTrue.length; i++) {
+			if (!trie.contains(arrTrue[i])) {
+				System.out.println("Failed. Must be true: " + arrTrue[i]);
+			}
+		}
+		if (i==arrTrue.length) System.out.println("Success");
 
+
+	}
 
 	public static void main(String[] args) throws FileNotFoundException {
-		//PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Practical 7/outputB.txt"));
-		//System.setOut(out);
+		/*PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Practical 7/outputB.txt"));
+		System.setOut(out);*/
 		char[] letters = {'E', 'Q', 'R', 'T', 'W', 'Y'};
 		Trie trie = new Trie(letters);
 			
@@ -25,30 +46,21 @@ public class Main {
 		trie.insert("ERR");
 		trie.insert("EWE");
 		trie.insert("EWER");
+		trie.insert("QWERTY");
+		trie.insert("ERE");
+		trie.insert("RERE");
+		trie.insert("RE");
+		trie.insert("QQQ");
+		trie.insert("QQE");
+		trie.insert("QQWW");
 		trie.print(false);
 
-		System.out.println("TESTING FALSE INPUTS");
-		System.out.println(trie.contains("WHERE")); //false
-		System.out.println(trie.contains("YER")); //false
-		System.out.println(trie.contains("YEQ")); //false
-		System.out.println(trie.contains("JEW")); //false
-		System.out.println(trie.contains("YUQ"));
-
-		System.out.println("TESTING TRUE INPUTS");
-		System.out.println(trie.contains("TERRY"));
-		System.out.println(trie.contains("EWE"));
-		System.out.println(trie.contains("WERE"));
-		System.out.println(trie.contains("TYRE"));
-		System.out.println(trie.contains("YET"));
-		System.out.println(trie.contains("EYE"));
-		System.out.println(trie.contains("YEW"));
-		System.out.println(trie.contains("ERR"));
-		System.out.println(trie.contains("EWER"));
-
-		/*
+		testContains(trie);
 
 
-		trie.printKeyList();		*/
+
+		trie.printKeyList();
+
 
 		/* Expected Output:
 		Level 1 [ (#,0)  (E,1)  (Q,0)  (R,1)  (T,1)  (W,1)  (Y,1) ]
