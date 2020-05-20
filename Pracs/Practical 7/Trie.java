@@ -173,7 +173,9 @@ public class Trie {
     // Function to print all the keys in the trie in alphabetical order.
     public void printKeyList() {
         // Your code goes here
-        if (this.root == null) return;
+        if (this.root == null) {
+            return;
+        }
         else if (this.root.isLeaf) {
             System.out.print(root.key);
             return;
@@ -182,6 +184,7 @@ public class Trie {
                 if (this.root.ptrs[i] == null) continue;
                 else printPtr(this.root.ptrs[i]);
             }
+            System.out.print("\n");
         }
     }
 
@@ -194,6 +197,8 @@ public class Trie {
                 else printPtr(node.ptrs[i]);
             }
         }
+
+
     }
 
 
