@@ -36,6 +36,8 @@ class BPTreeInnerNode<TKey extends Comparable<TKey>, TValue> extends BPTreeNode<
 
 	////// Implement functions below this line //////
 
+
+	//NB NB CHANGED >0 to >=0
 	public int findIndexOf(TKey key) {
 		for (int i = 0; i < this.keyTally; i++) {
 			TKey keyx = (TKey) this.keys[i];

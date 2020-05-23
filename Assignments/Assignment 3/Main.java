@@ -1,241 +1,136 @@
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.Random;
-
 public class Main {
-    public static void printArrOfValues(BPTree<Integer, Integer> tree) {
-        Object[] arr = tree.values();
-        System.out.println("Size=" + arr.length);
-        for (int i = 0; i < arr.length; i++) {
-            System.out.print((Integer) arr[i] + " ");
-        }
-        System.out.println(" ");
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-         PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass3/outputB.txt"));
-        System.setOut(out);
-        //General tree
-/*        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-        Integer[] keys = {20, 10, 30, 50, 40, 60, 90, 70, 80, 100};
-        Integer[] values = {5000, 1000, 9000, 8000, 2000, 70000, 3000, 6000, 4000, 4500};
-        for (int i = 0; i < keys.length; i++) {
-            System.out.println("\ni=" + (i) + " Insert: " + keys[i] + ", " + values[i]);
-            tree.insert(keys[i], values[i]);
-            printArrOfValues(tree);
-            //tree.print();
-        }*/
-
-
-        //Random Treee
-        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-        Random rd = new Random();
-        rd.setSeed(123456987);
-        int numInserts = 200;
-        for (int i = 0; i < numInserts; i++) {
-            int key = Math.abs(rd.nextInt()) % 100 + 1;
-            int val = key*1;
-            tree.insert(key, val);
-            System.out.println("\ni=" + (i) + " Insert: " + key + ", " + val);
-            tree.print();
-            printArrOfValues(tree);
-
-        }
-
-
-	/*
-
-
-	tree.insert(20, 5000);
-		tree.print();
-	tree.insert(10, 1000);
-		tree.print();
-	tree.insert(30, 9000);
-		tree.print();
-	tree.insert(50, 8000);
-		tree.print();
-	tree.insert(40, 2000);
-		tree.print();
-	tree.insert(60, 7000);
-		tree.print();
-	tree.insert(90, 3000);
-		tree.print();
-	tree.insert(70, 6000);
-		tree.print();
-	tree.insert(80, 4000);
-	tree.print();
-
-
-
-
-
-	System.out.println("Structure of the constructed tree is: ");
-	tree.print();
-
-	Integer value = 70; // Delete leaf also internal
-	tree.delete(value);
-	System.out.println("Structure of the tree after delete of: " + value);
-	tree.print();
-
-	value = 60; // Delete leaf
-	tree.delete(value);
-	System.out.println("Structure of the tree after delete of: " + value);
-	tree.print();
-
-	value = 50; // Delete leaf, underflow, borrow left
-	tree.delete(value);
-	System.out.println("Structure of the tree after delete of: " + value);
-	tree.print();
-
-	value = 40; // Delete leaf, underflow, borrow right
-	tree.delete(value);
-	System.out.println("Structure of the tree after delete of: " + value);
-	tree.print();
-
-	System.out.println("Search the tree for 80: ");
-    	Integer result = (Integer)tree.search(80);
-	if (result != null)
-		System.out.println("Found key with value " + result);
-	else
-		System.out.println("Key not found!");
-
-	System.out.println("Search the tree for 100: ");
-    	result = (Integer)tree.search(100);
-	if (result != null)
-		System.out.println("Found key with value " + result);
-	else
-		System.out.println("Key not found!");
-
-	System.out.println("Search the tree for 40: ");
-	result = (Integer)tree.search(40);
-	if (result != null)
-		System.out.println("Found key with value " + result);
-	else
-		System.out.println("Key not found!");
-
-	// DB student table indexes
-	BPTree<Integer, Integer> pktree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-	pktree.insert(16230943, 1);
-	pktree.insert(17248830, 2);
-	pktree.insert(16094340, 3);
-	pktree.insert(17012340, 4);
 	
-	System.out.println();
-	System.out.println("Structure of the constucted index is: ");
-	pktree.print();
-	
-	Integer studentid = 17248830;
-	System.out.println("Search the index tree for student: " + studentid);
-	result = (Integer)pktree.search(studentid);
-	if (result != null)
-		System.out.println("Found key with value " + result);
-	else
-		System.out.println("Key not found!");
 
-	System.out.println("Return index tree values ordered by student id: ");
-	Object[] array = pktree.values();
-	if (array != null) {
-		for (int i = 0; i < array.length; i++)
-			System.out.println("Value " + array[i]);
-	} else
-		System.out.println("Index empty!");
+	public static void main(String[] args) 
+	{
 
-	BPTree<String, Integer> sktree = new BPTree<String, Integer>(4); // A B+ Tree with order 4
-	sktree.insert("Molefe", 1);
-	sktree.insert("Muller", 2);
-	sktree.insert("Botha", 3);
-	sktree.insert("Evans", 4);
-	System.out.println();
-	System.out.println("Structure of the constucted index is: ");
-	sktree.print();
-	
-	String surname = "Botha";
-	System.out.println("Search the index tree for student: " + surname);
-	result = (Integer)sktree.search(surname);
-	if (result != null)
-		System.out.println("Found key with value " + result);
-	else
-		System.out.println("Key not found!");
+		String[] columns = new String[]{"StudentId", "Name", "Surname"};
+		Table student = new Table("Student", columns);
 
-	System.out.println("Return index tree values ordered by surname: ");
-	array = sktree.values();
-	if (array != null) {
-		for (int i = 0; i < array.length; i++)
-			System.out.println("Value " + array[i]);
-	} else
-		System.out.println("Index empty!");*/
+		//Add some records
+		Record rec1 = new Record(3);
+		rec1.setColumn(1, Integer.valueOf(16230943));
+		rec1.setColumn(2, new String("Lerato"));
+		rec1.setColumn(3, new String("Molefe"));
+		student.insert(rec1);
+		Record rec2 = new Record(3);
+		rec2.setColumn(1, Integer.valueOf(17248830));
+		rec2.setColumn(2, new String("Isabel"));
+		rec2.setColumn(3, new String("Muller"));
+		student.insert(rec2);
+		Record rec3 = new Record(3);
+		rec3.setColumn(1, Integer.valueOf(16094340));
+		rec3.setColumn(2, new String("John"));
+		rec3.setColumn(3, new String("Botha"));
+		student.insert(rec3);
+		Record rec4 = new Record(3);
+		rec4.setColumn(1, Integer.valueOf(17012340));
+		rec4.setColumn(2, new String("Michael"));
+		rec4.setColumn(3, new String("Evans"));
+		student.insert(rec4);
 
-	/* Expected Output:
-	Structure of the constucted tree is:
-	Level 1 [ 30 50 70]
-	Level 2 [ 10 20]
-	Level 2 [ 30 40]
-	Level 2 [ 50 60]
-	Level 2 [ 70 80 90]
+		//Select All - No indexes
+		student.select(null, null, null);
 
-	Structure of the tree after delete of: 70
-	Level 1 [ 30 50 70]
-	Level 2 [ 10 20]
-	Level 2 [ 30 40]
-	Level 2 [ 50 60]
-	Level 2 [ 80 90]
+		//Select All Ordered By - No indexes
+		student.select(null, null, "StudentId");
 
-	Structure of the tree after delete of: 60
-	Level 1 [ 30 50 70]
-	Level 2 [ 10 20]
-	Level 2 [ 30 40]
-	Level 2 [ 50]
-	Level 2 [ 80 90]
+		student.createIndex("PrimKey", "StudentId");
+		student.createIndex("SecKey", "Surname");
+		student.printIndex("PrimKey");
+		student.printIndex("SecKey");
 
-	Structure of the tree after delete of: 50
-	Level 1 [ 30 40 70]
-	Level 2 [ 10 20]
-	Level 2 [ 30]
-	Level 2 [ 40]
-	Level 2 [ 80 90]
+		/*//Select All Ordered By - Use index
+		student.select(null, null, "StudentId");
+		student.select(null, null, "Name");
+		student.select(null, null, "Surname");
 
-	Structure of the tree after delete of: 40
-	Level 1 [ 30 40 90]
-	Level 2 [ 10 20]
-	Level 2 [ 30]
-	Level 2 [ 80]
-	Level 2 [ 90]
+		//Select All Where Specific - Use index if available
+		student.select("StudentId", 17248830, null);
+		student.select("StudentId", 17123456, null);
+		student.select("Name", "Michael", null);
+		student.select("Name", "Mike", null);
+		student.select("Surname", "Botha", null);
+		student.select("Surname", "Oldfield", null);
 
-	Search the tree for 80:
-	Found key with value 4000
-	Search the tree for 100:
-	Key not found!
-	Search the tree for 40:
-	Key not found!
+		//Delete All Where Specific - Use index if available
+		student.delete("StudentId", 17248830);
+		student.delete("Surname", "Evans");
 
-	Structure of the constucted index is:
-	Level 1 [ 17012340]
-	Level 2 [ 16094340 16230943]
-	Level 2 [ 17012340 17248830]
+		//Updated indexes
+		student.printIndex("PrimKey");
+		student.printIndex("SecKey");
 
-	Search the index tree for student: 17248830
-	Found key with value 2
-	Return index tree values ordered by student id:
-	Value 3
-	Value 1
-	Value 4
-	Value 2
+		//Select All
+		student.select(null, null, null);
 
-	Structure of the constucted index is :
-	Level 1 [ Molefe]
-	Level 2 [ Botha Evans]
-	Level 2 [ Molefe Muller]
+		//Delete All
+		student.delete(null, null);
 
-	Search the index tree for student: Botha
-	Found key with value 3
-	Return index tree values ordered by surname:
-	Value 3
-	Value 4
-	Value 1
-	Value 2
-	*/
-    }
+		//Updated indexes
+		student.printIndex("PrimKey");
+		student.printIndex("SecKey");
 
+		//Select All
+		student.select(null, null, null);*/
+
+		/* Expected Output:
+		16230943,Lerato,Molefe
+		17248830,Isabel,Muller
+		16094340,John,Botha
+		17012340,Michael,Evans
+
+		No indexes found
+
+		Level 1 [ 17012340]
+		Level 2 [ 16094340 16230943]
+		Level 2 [ 17012340 17248830]
+
+		Level 1 [ Molefe]
+		Level 2 [ Botha Evans]
+		Level 2 [ Molefe Muller]
+
+		16094340,John,Botha
+		16230943,Lerato,Molefe
+		17012340,Michael,Evans
+		17248830,Isabel,Muller
+
+		No suitable index found
+
+		16094340,John,Botha
+		17012340,Michael,Evans
+		16230943,Lerato,Molefe
+		17248830,Isabel,Muller
+
+		17248830,Isabel,Muller
+
+		Record(s) not found
+
+		17012340,Michael,Evans
+
+		Record(s) not found
+
+		16094340,John,Botha
+
+		Record(s) not found
+
+		Level 1 [ 16230943]
+		Level 2 [ 16094340]
+		Level 2 [ 16230943]
+
+		Level 1 [ Molefe]
+		Level 2 [ Botha]
+		Level 2 [ Molefe]
+
+		16230943,Lerato,Molefe
+		16094340,John,Botha
+
+		Level 1 []
+
+		Level 1 []
+
+		No records found
+		*/
+	}
 
 }
