@@ -47,6 +47,13 @@ public class Graph {
         if (dist[start][end].equals(Double.POSITIVE_INFINITY)) {
             return new ArrayList<>();
         }
+        //start == end
+        if (start==end && dist[start][end].equals(Double.POSITIVE_INFINITY)) {
+            ArrayList<Vertex> singleton = new ArrayList<Vertex>();
+            singleton.add(sourceVertex);
+            return singleton;
+        }
+
         //reachable, construct path
         return reconstructPath(sourceVertex, targetVertex);
 
@@ -55,29 +62,18 @@ public class Graph {
     public List<Vertex> reconstructPath(Vertex sourceVertex, Vertex targetVertex) {
         int start = findVertexIndex(sourceVertex.getName());
         int end = findVertexIndex(targetVertex.getName());
-        if (next[start][end]==null) {
+        if (next[start][end] == null) {
             return new ArrayList<>();
         }
         List<Vertex> path = new ArrayList<>();
         path.add(sourceVertex);
-        while (sourceVertex!=targetVertex) {
+        while (sourceVertex != targetVertex) {
             sourceVertex = next[start][end];
             path.add(sourceVertex);
             start = findVertexIndex(sourceVertex.getName());
         }
         return path;
     }
-    /*
-    procedure Path(u, v)
-    if next[u][v] = null then
-        return []
-    path = [u]
-    while u ≠ v
-        u ← next[u][v]
-        path.append(u)
-    return path
-
-     */
 
     public double getShortestPathDistance(Vertex sourceVertex, Vertex targetVertex) {
         // Your code here
@@ -88,6 +84,9 @@ public class Graph {
 
         if (findNegativeCycle()) {
             return Double.NEGATIVE_INFINITY;
+        }
+        if (start == end && dist[start][end].equals(Double.POSITIVE_INFINITY)) {
+            return 0;
         }
         //will return infinity or value
         return dist[start][end];
@@ -134,7 +133,6 @@ public class Graph {
             }
         }
 
-//        printArr(this.dist);
 
         for (int k = 0; k < V; k++) {           //pick all vertices as source one by one
             for (int i = 0; i < V; i++) {       //pick all vertices as destination one by one
@@ -146,14 +144,10 @@ public class Graph {
                 }
             }
         }
-
-//        printArr(this.dist);
-
-
     }
 
     private void printArr(Double[][] arr) {
-        for (Vertex v: this.verticesList) {
+        for (Vertex v : this.verticesList) {
             System.out.print(v.getName() + "     ");
         }
         System.out.println(" ");
@@ -163,8 +157,7 @@ public class Graph {
             for (int j = 0; j < arr.length; j++) {
                 if (arr[i][j].equals(Double.POSITIVE_INFINITY)) {
                     System.out.print("x.x ");
-                }
-                else {
+                } else {
                     System.out.print(arr[i][j] + " ");
                 }
             }
