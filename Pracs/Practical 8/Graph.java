@@ -43,16 +43,17 @@ public class Graph {
             //empty list
             return null;
         }
-        // unreachable
-        if (dist[start][end].equals(Double.POSITIVE_INFINITY)) {
-            return new ArrayList<>();
-        }
         //start == end
         if (start==end && dist[start][end].equals(Double.POSITIVE_INFINITY)) {
             ArrayList<Vertex> singleton = new ArrayList<Vertex>();
             singleton.add(sourceVertex);
             return singleton;
         }
+        // unreachable
+        if (dist[start][end].equals(Double.POSITIVE_INFINITY)) {
+            return new ArrayList<>();
+        }
+
 
         //reachable, construct path
         return reconstructPath(sourceVertex, targetVertex);
