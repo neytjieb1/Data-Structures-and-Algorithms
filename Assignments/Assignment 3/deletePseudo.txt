@@ -1,0 +1,71 @@
+0. delNode = search(key)
+    if (delNode == null) return null
+
+1. Delete key from from delNode
+
+2. If delNode.keyTally > half
+    DONE
+
+3. for (i = 0; parent.getChild(i) != node; i++); //finding i
+
+//Just checking here: nodes only have sibling of the same parent even though we
+//link to nodes outside of the parent node for traversal?
+
+4. if lSib!=null && lSib > half             //ie. share
+    insert lSib.keys[keyTally-1] into delNode.keys[0]
+    update parent.keys[i-1]         //since delNode is at parent.ref[i]     this is right, right?
+    DONE
+
+4. if rSib!=null && rSib > half             //ie. share
+    insert rSib.keys[0] into delNode at delNode.keys[keyTally]
+    update parent.keys[i]           //since rSib's index has now changed    this is right, right?
+    DONE
+
+5. if lSib!=null
+    merge(lSib, delNode)
+    check for underflow of parent
+    DONE
+
+6. if rSib!=null
+    merge(rSib, delNode)
+    check for underflow of parent
+    DONE
+
+
+//This is where things go wack. I'm very unsure about whether I'm following the rules as I perceive them to be.
+
+I. MERGE (lNode, rNode)
+    i = for (i = 0; parent.getChild(i) != lNode; i++); //finding i
+    if i==0
+        remove parent.key[0]
+        remove parent.ref[0]
+        parent.keyTally--
+    if i!=0
+        remove parent.ref[i]
+        remove parent.key[i-1]
+        parent.keyTally--
+    shift keys and references of parent back by 1
+    if (lNode underflowing)
+        rNode's keys = rNode's keys + lNode's keys          //loosely speaking
+        parent.keys[i-1] = fullNode.keys[0]  //update index value
+    else //rNode underflowing
+        lNode's keys = lNode's keys + rNode's keys          //loosely speaking
+        //no need to update parent's keys
+
+
+II. UNDERFLOW(parent)
+    while parent.keyTally<half
+        if parent != null
+            GP = parent.parent
+            i = GP.references[i] where parent = GP.references[i]
+            if i==0
+                take value at GP.keys[0] and put into parent
+                remove GP.keys[0]
+                remove GP.ref[0]
+                merge parent and its RSibling
+            if i!=0
+                take value at i-1 and put into parent
+                remove GP.keys[i-1]
+                remove GP.ref[i]
+                merge parent and its sibling
+            parent = GP

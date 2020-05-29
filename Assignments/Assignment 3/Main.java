@@ -21,7 +21,7 @@ public class Main {
         Random rd = new Random();
         rd.setSeed(rdSeed);
         for (int i = 0; i < numInserts; i++) {
-            int key = Math.abs(rd.nextInt()) % 100 + 1;
+            int key = Math.abs(rd.nextInt()) % 1000 + 1;
             int val = key * 1;
             tree.insert(key, val);
             System.out.println("\ni=" + (i) + " Insert: " + key + ", " + val);
@@ -35,20 +35,23 @@ public class Main {
         }
     }
 
-    public static void testDelete(BPTree<Integer, Integer> tree, int numInserts) {
+    public static void testDelete(BPTree<Integer, Integer> tree, int numDeletes, boolean verbose) {
         Random rd = new Random();
         rd.setSeed(rdSeed);
-        for (int i = 0; i < numInserts; i++) {
+        for (int i = 0; i < numDeletes; i++) {
 
-            int delVal = Math.abs(rd.nextInt()) % 100 + 1;
-            if (tree.search(delVal) == null) {
-                System.out.println("i: " + i + " Shouldn't change anything when deleting " + delVal);
-            }
-            else {
-                System.out.println("i: " + i + " After deletion: " + delVal);
+            int delVal = Math.abs(rd.nextInt()) % 1000 + 1;
+            if (verbose) {
+                if (tree.search(delVal) == null) {
+                    System.out.println("i: " + i + " Shouldn't change anything when deleting " + delVal);
+                } else {
+                    System.out.println("i: " + i + " After deletion: " + delVal);
+                }
             }
             tree.delete(delVal);
-            tree.print();
+            if (verbose) {
+                tree.print();
+            }
 
         }
     }
@@ -58,9 +61,9 @@ public class Main {
         System.setOut(out);*/
 
         //Random Tree
-        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-        testInsert(tree, 200, false);
-
+        /*BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
+        testInsert(tree, 20, true);
+*/
         /*BPTree<Integer, Integer> t = new BPTree<Integer, Integer>(4);
         Integer[] arr = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
         for (int i = 0; i < arr.length; i++) {
@@ -69,12 +72,13 @@ public class Main {
         t.print();
         printArrOfValues(t);*/
 
-        testDelete(tree, 50);
+        /*testDelete(tree, 20, true);*/
 
 
 
 
-        /*BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
+
+        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
 
         tree.insert(20, 5000);
         tree.insert(10, 1000);
@@ -109,7 +113,17 @@ public class Main {
         System.out.println("Structure of the tree after delete of: " + value);
         tree.print();
 
-        System.out.println("Search the tree for 80: ");
+        value = 30;
+        tree.delete(value);
+        System.out.println("Structure of the tree after delete of: " + value);
+        tree.print();
+
+        value = 90; //or 10 both work
+        tree.delete(value);
+        System.out.println("Structure of the tree after delete of: " + value);
+        tree.print();
+
+        /*System.out.println("Search the tree for 80: ");
         Integer result = (Integer) tree.search(80);
         if (result != null)
             System.out.println("Found key with value " + result);
@@ -143,9 +157,9 @@ public class Main {
         if (result != null)
             System.out.println("Found key with value " + result);
         else
-            System.out.println("Key not found!");
+            System.out.println("Key not found!");*/
 
-        // DB student table indexes
+        /*// DB student table indexes
         BPTree<Integer, Integer> pktree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
         pktree.insert(16230943, 1);
         pktree.insert(17248830, 2);
