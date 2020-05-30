@@ -427,24 +427,27 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         while (true) {
             BPTreeInnerNode<TKey, TValue> parent = (BPTreeInnerNode<TKey, TValue>) node.parentNode;
             BPTreeNode<TKey, TValue> sibling;
-            //get index
-            for (i = 0; parent.getChild(i) != node; i++) ;
-
             //if no underflow
             if (node.keyTally >= Math.ceil(m / 2) - 1) {
                 return this;
+            }
+            //get index (consider parent case as well
+            if (!node.equals(this)) { //added in later
+                for (i = 0; parent.getChild(i) != node; i++) ;
+            } else {
+                return node;
             }
             //has shareable leftSib
             if (i >= 1 && parent.getChild(i - 1) != null && parent.getChild(i - 1).keyTally > Math.ceil(m / 2) - 1) {
                 sibling = parent.getChild(i - 1);
                 if (node.isLeaf()) {
                     TKey Key = (TKey) sibling.keys[sibling.keyTally - 1];
-                    TValue val = (TValue) ((BPTreeLeafNode<TKey, TValue>) sibling).values[i];
+                    TValue val = (TValue) ((BPTreeLeafNode<TKey, TValue>) sibling).values[sibling.keyTally - 1];
                     for (int j = 0; j < node.keyTally + 1; j++) {
-                        TKey tempKey = (TKey) node.keys[i];
-                        TValue tempVal = (TValue) ((BPTreeLeafNode<TKey, TValue>) node).values[i];
+                        TKey tempKey = (TKey) node.keys[j];
+                        TValue tempVal = (TValue) ((BPTreeLeafNode<TKey, TValue>) node).values[j];
                         node.keys[j] = Key;
-                        ((BPTreeLeafNode<TKey, TValue>) node).values[i] = val;
+                        ((BPTreeLeafNode<TKey, TValue>) node).values[j] = val;
                         Key = tempKey;
                         val = tempVal;
                     }
@@ -509,7 +512,8 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                     //update Sibling
                     for (int j = 0; j < sibling.keyTally; j++) {
                         sibling.keys[j] = sibling.keys[j + 1];
-                        ((BPTreeInnerNode<TKey, TValue>) sibling).setChild(i, ((BPTreeInnerNode<TKey, TValue>) sibling).getChild(i + 1));
+                        ((BPTreeInnerNode<TKey, TValue>) sibling).references[j] = ((BPTreeInnerNode<TKey, TValue>) sibling).references[j + 1];
+                        //((BPTreeInnerNode<TKey, TValue>) sibling).setChild(i, ((BPTreeInnerNode<TKey, TValue>) sibling).getChild(i + 1));
                     }
                     ((BPTreeInnerNode<TKey, TValue>) sibling).setChild(sibling.keyTally, null);
                     /* redistribute between node, sibling and parent (ie take from top and then move up from fullSib)
@@ -530,9 +534,9 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                         }
                         newRoot.keyTally += node.keyTally;
                         if (newRoot.keyTally == 0)
-                            newRoot.references[0] = ((BPTreeInnerNode<TKey, TValue>) node).references[1];
+                            newRoot.references[0] = ((BPTreeInnerNode<TKey, TValue>) node).references[0];
                         insertIntoNewRoot(sibling, sibling, (BPTreeInnerNode<TKey, TValue>) newRoot);
-                        newRoot.references[newRoot.keyTally] = ((BPTreeInnerNode<TKey, TValue>) node).references[sibling.keyTally];
+                        //newRoot.references[newRoot.keyTally] = ((BPTreeInnerNode<TKey, TValue>) node).references[sibling.keyTally];
                     } else {
                         sibling = parent.getChild(0);
                         for (int j = 0; j < sibling.keyTally; j++) {
@@ -577,7 +581,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                             newRoot.values[j] = ((BPTreeLeafNode<TKey, TValue>) sibling).values[j];
                         }
                         newRoot.keyTally += sibling.keyTally;
-                        for (int j = 0; j < sibling.keyTally; j++) {
+                        for (int j = 0; j < node.keyTally; j++) {
                             newRoot.keys[newRoot.keyTally + j] = node.keys[j];
                             newRoot.values[newRoot.keyTally + j] = ((BPTreeLeafNode<TKey, TValue>) node).values[j];
                         }
@@ -599,11 +603,14 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 
     private void insertIntoNewRoot(BPTreeNode<TKey, TValue> node, BPTreeNode<TKey, TValue> sibling, BPTreeInnerNode<TKey, TValue> newRoot) {
         newRoot.keys[newRoot.keyTally] = this.keys[0];
+        newRoot.keyTally++;
         for (int j = 0; j < node.keyTally; j++) {
             newRoot.keys[newRoot.keyTally + j] = node.keys[j];
-            newRoot.references[newRoot.keyTally + j + 1] = ((BPTreeInnerNode<TKey, TValue>) node).references[j];
+            newRoot.references[newRoot.keyTally + j] = ((BPTreeInnerNode<TKey, TValue>) node).references[j];
         }
-        newRoot.keyTally += sibling.keyTally;
+        newRoot.keyTally += node.keyTally;
+        newRoot.references[newRoot.keyTally] = ((BPTreeInnerNode<TKey, TValue>) node).references[node.keyTally];
+
     }
 
     public void merge(BPTreeNode<TKey, TValue> node, int i) {
@@ -620,6 +627,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                 sibling = parent.getChild(i + 1);
                 //insert sibling into node and then shift around
                 insertValsLeafNode(node, sibling);
+                node.rightSibling = sibling.rightSibling;
                 parent.setChild(i + 1, node);
                 //update parent
                 updateParent(i, (BPTreeInnerNode<TKey, TValue>) parent);
@@ -686,18 +694,41 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
     private void updateParent(int i, BPTreeInnerNode<TKey, TValue> parent) {
         if (parent.getChild(i).isLeaf()) {
             //update linkages //will be overwriting i
+            BPTreeNode<TKey, TValue> newNode;
+            if (i == 0) {
+                newNode = parent.getChild(i + 1);
+                newNode.leftSibling = parent.getChild(i).leftSibling;
+                if (newNode.rightSibling != null) {
+                    newNode.rightSibling.leftSibling = parent.getChild(i).leftSibling;
+                }
+            } else if (i == parent.keyTally) {
+                newNode = parent.getChild(i - 1);
+                newNode.rightSibling = parent.getChild(i).rightSibling;
+                if (parent.getChild(i).rightSibling != null) {
+                    parent.getChild(i).rightSibling = newNode;
+                }
+            } else {
+                newNode = parent.getChild(i);
+                if (newNode.leftSibling != null) newNode.leftSibling.rightSibling = newNode.rightSibling;
+                if (newNode.rightSibling != null) newNode.rightSibling.leftSibling = newNode.leftSibling;
+            }
 
-            if (i!=0) {
+
+
+            /*if (i!=0) { replaced with siblings
                 if (parent.getChild(i + 1) != null) {
                     parent.getChild(i + 1).leftSibling = parent.getChild(i - 1);
                 }
-                parent.getChild(i - 1).rightSibling = parent.getChild(i + 1);
+                parent.getChild(i - 1).rightSibling = parent.getChild(i).rightSibling;
+                parent.getChild(i).leftSibling = parent.getChild(i-1).leftSibling;
             }
             else {
-                parent.getChild(1).leftSibling = null;
-                parent.getChild(1).rightSibling = parent.getChild(2);
-                parent.getChild(2).rightSibling = parent.getChild(1);
-            }
+                //parent.getChild(1).leftSibling = null;
+                //parent.getChild(1).rightSibling = parent.getChild(2); //changed this
+                if (parent.getChild(2)!=null) {
+                    parent.getChild(2).leftSibling = parent.getChild(1);
+                }
+            }*/
         }
         for (int j = i; j < parent.keyTally; j++) {
             parent.keys[j] = parent.keys[j + 1];
@@ -708,12 +739,19 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         }
         parent.references[parent.keyTally] = null;
         parent.keyTally--;
+
         //update index set
-        if (parent.getChild(0).isLeaf()) {
+        if (i - 1 == parent.keyTally) {
+            parent.keys[i - 1] = parent.getChild(i - 1).keys[0];
+        } else if (i != 0) {
+            parent.keys[i] = parent.getChild(i + 1).keys[0];
+        }
+
+        /*if (parent.getChild(0).isLeaf()) { // too much. Shouldn update all indices
             for (int j = 0; j < parent.keyTally; j++) {
                 parent.keys[j] = parent.getChild(j + 1).keys[0];
             }
-        }
+        }*/
     }
 
 
