@@ -544,6 +544,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                             newRoot.references[j] = ((BPTreeInnerNode<TKey, TValue>) sibling).references[j];
                         }
                         newRoot.keyTally += sibling.keyTally;
+                        newRoot.references[newRoot.keyTally] = ((BPTreeInnerNode<TKey, TValue>) sibling).references[sibling.keyTally];
                         insertIntoNewRoot(node, sibling, (BPTreeInnerNode<TKey, TValue>) newRoot);
                         if (((BPTreeInnerNode<TKey, TValue>) node).references[node.keyTally] == null) {
                             newRoot.references[newRoot.keyTally] = ((BPTreeInnerNode<TKey, TValue>) node).references[node.keyTally - 1];
@@ -638,7 +639,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
             if (i >= 1 && parent.getChild(i - 1) != null) {//has a left sibling
                 //insert keyValue from parent
                 sibling = parent.getChild(i - 1);
-                sibling.keys[sibling.keyTally] = parent.keys[i];
+                sibling.keys[sibling.keyTally] = parent.keys[i-1];
                 sibling.keyTally++;
                 //move references of node
                 if (((BPTreeInnerNode<TKey, TValue>) node).getChild(0) == null) {
@@ -649,7 +650,29 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                 //insert references && keyValues
                 insertRefInnerNode(node, sibling);
                 //update parent
-                updateParent(i, (BPTreeInnerNode<TKey, TValue>) parent);
+                if (parent.isLeaf()) {
+                    updateParentLinkages(i, parent);
+                }
+                for (int j = i-1; j < parent.keyTally; j++) {
+                    parent.keys[j] = parent.keys[j+1];
+                }
+                for (int j = i; j < parent.keyTally; j++) {
+                    parent.references[j] = parent.references[j+1];
+                }
+                if (i==parent.keyTally) parent.keys[parent.keyTally-1] = null;
+                parent.references[parent.keyTally] = null;
+                parent.keyTally--;
+                //update index set
+                if (i - 1 == parent.keyTally) {
+                    parent.keys[i - 1] = parent.getChild(i - 1).keys[0];
+                } else if (i != 0) {
+                    if (parent.keyTally != 1) {
+                        parent.keys[i] = parent.getChild(i + 1).keys[0];
+                    }
+                }
+
+
+
             } else if (i + 1 < parent.keyTally && parent.getChild(i + 1) != null) {
                 sibling = parent.getChild(i + 1);
                 //insert keys into node
@@ -689,46 +712,35 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
             ((BPTreeInnerNode<TKey, TValue>) sibling).references[sibling.keyTally + j] = ((BPTreeInnerNode<TKey, TValue>) node).references[j];
         }
         sibling.keyTally += node.keyTally;
+        ((BPTreeInnerNode<TKey, TValue>) sibling).references[sibling.keyTally] = ((BPTreeInnerNode<TKey, TValue>) node).references[node.keyTally];
+    }
+
+    private void updateParentLinkages(int i, BPTreeInnerNode<TKey, TValue> parent) {
+        //update linkages //will be overwriting i
+        BPTreeNode<TKey, TValue> newNode;
+        if (i == 0) {
+            newNode = parent.getChild(i + 1);
+            newNode.leftSibling = parent.getChild(i).leftSibling;
+            if (newNode.rightSibling != null) {
+                newNode.rightSibling.leftSibling = parent.getChild(i).leftSibling;
+            }
+        } else if (i == parent.keyTally) {
+            newNode = parent.getChild(i - 1);
+            newNode.rightSibling = parent.getChild(i).rightSibling;
+            if (parent.getChild(i).rightSibling != null) {
+                parent.getChild(i).rightSibling = newNode;
+            }
+        } else {
+            newNode = parent.getChild(i);
+            if (newNode.leftSibling != null) newNode.leftSibling.rightSibling = newNode.rightSibling;
+            if (newNode.rightSibling != null) newNode.rightSibling.leftSibling = newNode.leftSibling;
+        }
+        //different linking in planning
     }
 
     private void updateParent(int i, BPTreeInnerNode<TKey, TValue> parent) {
         if (parent.getChild(i).isLeaf()) {
-            //update linkages //will be overwriting i
-            BPTreeNode<TKey, TValue> newNode;
-            if (i == 0) {
-                newNode = parent.getChild(i + 1);
-                newNode.leftSibling = parent.getChild(i).leftSibling;
-                if (newNode.rightSibling != null) {
-                    newNode.rightSibling.leftSibling = parent.getChild(i).leftSibling;
-                }
-            } else if (i == parent.keyTally) {
-                newNode = parent.getChild(i - 1);
-                newNode.rightSibling = parent.getChild(i).rightSibling;
-                if (parent.getChild(i).rightSibling != null) {
-                    parent.getChild(i).rightSibling = newNode;
-                }
-            } else {
-                newNode = parent.getChild(i);
-                if (newNode.leftSibling != null) newNode.leftSibling.rightSibling = newNode.rightSibling;
-                if (newNode.rightSibling != null) newNode.rightSibling.leftSibling = newNode.leftSibling;
-            }
-
-
-
-            /*if (i!=0) { replaced with siblings
-                if (parent.getChild(i + 1) != null) {
-                    parent.getChild(i + 1).leftSibling = parent.getChild(i - 1);
-                }
-                parent.getChild(i - 1).rightSibling = parent.getChild(i).rightSibling;
-                parent.getChild(i).leftSibling = parent.getChild(i-1).leftSibling;
-            }
-            else {
-                //parent.getChild(1).leftSibling = null;
-                //parent.getChild(1).rightSibling = parent.getChild(2); //changed this
-                if (parent.getChild(2)!=null) {
-                    parent.getChild(2).leftSibling = parent.getChild(1);
-                }
-            }*/
+            updateParentLinkages(i, parent);
         }
         for (int j = i; j < parent.keyTally; j++) {
             parent.keys[j] = parent.keys[j + 1];
@@ -744,7 +756,12 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         if (i - 1 == parent.keyTally) {
             parent.keys[i - 1] = parent.getChild(i - 1).keys[0];
         } else if (i != 0) {
-            parent.keys[i] = parent.getChild(i + 1).keys[0];
+            if (parent.keyTally!=1) {
+                parent.keys[i] = parent.getChild(i + 1).keys[0];
+            }
+            /*else {
+                parent.keys[0] = parent.getChild(1).keys[0];
+            }*/
         }
 
         /*if (parent.getChild(0).isLeaf()) { // too much. Shouldn update all indices

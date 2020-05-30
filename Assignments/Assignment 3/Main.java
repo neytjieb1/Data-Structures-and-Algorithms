@@ -303,11 +303,11 @@ public class Main {
         printArrOfValues(tree);
 
         //case 19: delete from leftmost, parent also underflows
-        Integer value = 4;  //either 4/6 (merge parent
-        tree.delete(value);
-        System.out.println("\nStructure of the tree after delete of: " + value);
-        tree.print();
-        printArrOfValues(tree);
+//        Integer value = 4;  //either 4/6 (merge parent
+//        tree.delete(value);
+//        System.out.println("\nStructure of the tree after delete of: " + value);
+//        tree.print();
+//        printArrOfValues(tree);
 
         //case 20: delete from leftmost, parent also underflows
         Integer value = 8;  //either 8/10 (merge parent
@@ -341,7 +341,7 @@ public class Main {
         //testCase17_18(tree);
         //testCase19_20(tree);
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 16; i++) {
             tree.insert(i+1,i+1);
         }
         System.out.println("\nStructure of the constructed tree is: ");
@@ -356,7 +356,12 @@ public class Main {
         tree.print();
         printArrOfValues(tree);
 
-
+        //case 21: delete from middle, parent also underflows
+        Integer value = 8;  //either 8/10 (merge parent
+        tree.delete(value);
+        System.out.println("\nStructure of the tree after delete of: " + value);
+        tree.print();
+        printArrOfValues(tree);
 
 
 
