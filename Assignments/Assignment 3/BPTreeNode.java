@@ -553,9 +553,11 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                         }
                         /* merge node, sib and parent*/
                     }
+                    newRoot.resetParentNodes();
                     return newRoot;
                 } else {
                     merge(node, i);
+                    this.resetParentNodes();
                     return this;
                 }
             }
@@ -588,13 +590,16 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                         }
                         newRoot.keyTally += node.keyTally;
                     }
+                    newRoot.resetParentNodes();
                     return newRoot;
                 } else {
                     merge(node, i);
+                    this.resetParentNodes();
                     return this;
                 }
             } else {
                 merge(node, i);
+                this.resetParentNodes();
                 node = node.parentNode;
             }
 
@@ -639,7 +644,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
             if (i >= 1 && parent.getChild(i - 1) != null) {//has a left sibling
                 //insert keyValue from parent
                 sibling = parent.getChild(i - 1);
-                sibling.keys[sibling.keyTally] = parent.keys[i-1];
+                sibling.keys[sibling.keyTally] = parent.keys[i - 1];
                 sibling.keyTally++;
                 //move references of node
                 if (((BPTreeInnerNode<TKey, TValue>) node).getChild(0) == null) {
@@ -653,13 +658,13 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                 if (parent.isLeaf()) {
                     updateParentLinkages(i, parent);
                 }
-                for (int j = i-1; j < parent.keyTally; j++) {
-                    parent.keys[j] = parent.keys[j+1];
+                for (int j = i - 1; j < parent.keyTally; j++) {
+                    parent.keys[j] = parent.keys[j + 1];
                 }
                 for (int j = i; j < parent.keyTally; j++) {
-                    parent.references[j] = parent.references[j+1];
+                    parent.references[j] = parent.references[j + 1];
                 }
-                if (i==parent.keyTally) parent.keys[parent.keyTally-1] = null;
+                if (i == parent.keyTally) parent.keys[parent.keyTally - 1] = null;
                 parent.references[parent.keyTally] = null;
                 parent.keyTally--;
                 //update index set
@@ -672,8 +677,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                 }
 
 
-
-            } else if (i + 1 < parent.keyTally && parent.getChild(i + 1) != null) {
+            } else if (parent.getChild(i + 1) != null) {  //i + 1 < parent.keyTally &&
                 sibling = parent.getChild(i + 1);
                 //insert keys into node
                 node.keys[node.keyTally] = parent.keys[i];
@@ -756,7 +760,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         if (i - 1 == parent.keyTally) {
             parent.keys[i - 1] = parent.getChild(i - 1).keys[0];
         } else if (i != 0) {
-            if (parent.keyTally!=1) {
+            if (parent.keyTally != 1 && parent.getChild(i+1)!=null) { //added in second &&
                 parent.keys[i] = parent.getChild(i + 1).keys[0];
             }
             /*else {
@@ -771,6 +775,20 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         }*/
     }
 
+    protected void resetParentNodes() {
+        if (this.isLeaf()) {
+            return;
+        } else if (((BPTreeInnerNode<TKey, TValue>) this).getChild(0).isLeaf()) {
+            for (int i = 0; i < this.keyTally + 1; i++) {
+                ((BPTreeInnerNode<TKey, TValue>) this).getChild(i).setParent(this);
+            }
+        } else {
+            for (int i = 0; i < this.keyTally+1; i++) {
+                ((BPTreeInnerNode<TKey, TValue>) this).getChild(i).setParent(this);
+                ((BPTreeInnerNode<TKey, TValue>) this).getChild(i).resetParentNodes();
+            }
+        }
+    }
 
     /*public BPTreeNode<TKey, TValue> deleteFirstTry(TKey key) {
         // Your code goes here

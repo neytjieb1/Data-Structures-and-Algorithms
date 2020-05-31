@@ -35,25 +35,31 @@ public class Main {
         }
     }
 
-    public static void testDelete(BPTree<Integer, Integer> tree, int numDeletes, boolean verbose) {
+    public static void testDelete(BPTree<Integer, Integer> tree, boolean verbose, int modValue) {
         Random rd = new Random();
         rd.setSeed(rdSeed);
-        for (int i = 0; i < numDeletes; i++) {
-
-            int delVal = Math.abs(rd.nextInt()) % 1000 + 1;
+        int i = 0;
+        Object[] arr = tree.values();
+        while (arr.length != 0) {
+            int delVal = Math.abs(rd.nextInt()) % modValue + 1;
+            while (tree.search(delVal) == null) {
+                delVal = Math.abs(rd.nextInt()) % modValue + 1;
+            }
             if (verbose) {
-                if (tree.search(delVal) == null) {
-                    System.out.println("i: " + i + " Shouldn't change anything when deleting " + delVal);
-                } else {
-                    System.out.println("i: " + i + " After deletion: " + delVal);
-                }
+                System.out.println("\ni: " + i + " After deletion: " + delVal);
+            }
+            if (i==138) {
+                System.out.println('x');
             }
             tree.delete(delVal);
-            if (verbose) {
+            if (verbose || i>= modValue-10) {
                 tree.print();
+                printArrOfValues(tree);
             }
-
+            i++;
+            arr = tree.values();
         }
+        System.out.println("\ni=" + i);
     }
 
     public static void testCase1_11(BPTree<Integer, Integer> tree) {
@@ -199,7 +205,7 @@ public class Main {
     }
 
     public static void testCase15(BPTree<Integer, Integer> tree) {
-        Integer arrIn[] = {1,2,3,4,5,6,7,8,9,10,11,12};
+        Integer arrIn[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
         for (int i = 0; i < arrIn.length; i++) {
             tree.insert(arrIn[i], arrIn[i]);
         }
@@ -207,7 +213,7 @@ public class Main {
         tree.print();
         printArrOfValues(tree);
 
-        Integer[] arrOut2 = {1,4,5,6};
+        Integer[] arrOut2 = {1, 4, 5, 6};
         for (int i = 0; i < arrOut2.length; i++) {
             tree.delete(arrOut2[i]);
         }
@@ -224,7 +230,7 @@ public class Main {
     }
 
     public static void testCase16(BPTree<Integer, Integer> tree) {
-        Integer arrIn[] = {1,2,3,4,5,6,7,8,9,10,11,12};
+        Integer arrIn[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
         for (int i = 0; i < arrIn.length; i++) {
             tree.insert(arrIn[i], arrIn[i]);
         }
@@ -232,7 +238,7 @@ public class Main {
         tree.print();
         printArrOfValues(tree);
 
-        Integer arrOut[] = {8,10,12,11};
+        Integer arrOut[] = {8, 10, 12, 11};
         for (int i = 0; i < arrOut.length; i++) {
             tree.delete(arrOut[i]);
         }
@@ -248,15 +254,15 @@ public class Main {
 
     }
 
-    public static void testCase17_18(BPTree<Integer,Integer> tree) {
+    public static void testCase17_18(BPTree<Integer, Integer> tree) {
         for (int i = 0; i < 18; i++) {
-            tree.insert(i+1, i+1);
+            tree.insert(i + 1, i + 1);
         }
         System.out.println("Structure of the constructed tree is: ");
         tree.print();
         printArrOfValues(tree);
 
-        Integer arrOut[] = {7,9,11,12};
+        Integer arrOut[] = {7, 9, 11, 12};
         for (int i = 0; i < arrOut.length; i++) {
             tree.delete(arrOut[i]);
         }
@@ -286,15 +292,15 @@ public class Main {
         printArrOfValues(tree);*/
     }
 
-    public static void testCase19_20(BPTree<Integer,Integer> tree) {
+    public static void testCase19_20(BPTree<Integer, Integer> tree) {
         for (int i = 0; i < 12; i++) {
-            tree.insert(i+1,i+1);
+            tree.insert(i + 1, i + 1);
         }
         System.out.println("\nStructure of the constructed tree is: ");
         tree.print();
         printArrOfValues(tree);
 
-        Integer[] arrOut = {1,3,5,7,9,11,2,12};
+        Integer[] arrOut = {1, 3, 5, 7, 9, 11, 2, 12};
         for (int i = 0; i < arrOut.length; i++) {
             tree.delete(arrOut[i]);
         }
@@ -317,38 +323,15 @@ public class Main {
         printArrOfValues(tree);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-         /*PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass3/outputB.txt"));
-        System.setOut(out);*/
-
-        //Random Tree
-        /*BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-        testInsert(tree, 20, true);
-        /*BPTree<Integer, Integer> t = new BPTree<Integer, Integer>(4);
-        Integer[] arr = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-        for (int i = 0; i < arr.length; i++) {
-            t.insert(arr[i],arr[i]);
-        }
-        t.print();
-        printArrOfValues(t);
-        testDelete(tree, 20, true);*/
-        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
-
-        //testCase1_11(tree);
-        //testCase12_14(tree);
-        //testCase15(tree);
-        //testCase16(tree);
-        //testCase17_18(tree);
-        //testCase19_20(tree);
-
+    public static void testCase21(BPTree<Integer, Integer> tree) {
         for (int i = 0; i < 16; i++) {
-            tree.insert(i+1,i+1);
+            tree.insert(i + 1, i + 1);
         }
         System.out.println("\nStructure of the constructed tree is: ");
         tree.print();
         printArrOfValues(tree);
 
-        Integer[] arrOut = {1,3,5,7,9,11,2,12};
+        Integer[] arrOut = {1, 3, 5, 7, 9, 11, 2, 12};
         for (int i = 0; i < arrOut.length; i++) {
             tree.delete(arrOut[i]);
         }
@@ -362,7 +345,35 @@ public class Main {
         System.out.println("\nStructure of the tree after delete of: " + value);
         tree.print();
         printArrOfValues(tree);
+    }
 
+    public static void main(String[] args) throws FileNotFoundException {
+         /*PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass3/outputB.txt"));
+        System.setOut(out);*/
+
+        BPTree<Integer, Integer> tree = new BPTree<Integer, Integer>(4); // A B+ Tree with order 4
+
+        //Deletions
+        //testCase1_11(tree);
+        //testCase12_14(tree);
+        //testCase15(tree);
+        //testCase16(tree);
+        //testCase17_18(tree);
+        //testCase19_20(tree);
+        //testCase21(tree);
+
+
+        //Random Tree
+        //testInsert(tree, 20, true);
+        BPTree<Integer, Integer> t = new BPTree<Integer, Integer>(4);
+        int numInserts = 500;
+        for (int i = 0; i < numInserts; i++) {
+            t.insert(i + 1, i + 1);
+        }
+        t.print();
+        printArrOfValues(t);
+
+        testDelete(t, false, numInserts);
 
 
 
