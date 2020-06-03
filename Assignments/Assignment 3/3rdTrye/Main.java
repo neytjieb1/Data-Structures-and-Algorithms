@@ -88,7 +88,7 @@ public class Main {
             } else {
                 System.out.println("\ni = " + i);
             }
-            if (i==138 && delVal==198) {
+            if (i==74) {
                 System.out.println('x');
             }
             tree.delete(delVal);
@@ -524,8 +524,8 @@ public class Main {
         PrintStream out = new PrintStream(new FileOutputStream("outputB.txt"));
         System.setOut(out);
 
-        testTheirOutput();
-
+        //testTheirOutput();
+/*
 
         System.out.println("\n\n===========MY DELETION CASES==============");
         //Deletions
@@ -548,7 +548,7 @@ public class Main {
         BPTree<Integer, Integer> tree6 = new BPTree<Integer, Integer>(6); // A B+ Tree with order 4
         testInsert(tree4, numInserts, verbose);
         testInsert(tree5, numInserts, verbose);
-        testInsert(tree6, numInserts, verbose);
+        testInsert(tree6, numInserts, verbose);*/
 
         System.out.println("\n\n===========MY TESTS 2==============");
         BPTree<Integer, Integer> t4 = new BPTree<Integer, Integer>(4);
@@ -556,28 +556,28 @@ public class Main {
         BPTree<Integer, Integer> t6 = new BPTree<Integer, Integer>(6);
 
         for (int i = 0; i < numInserts; i++) {
-            t4.insert(i + 1, i + 1);
+            //t4.insert(i + 1, i + 1);
             t5.insert(i + 1, i + 1);
-            t6.insert(i + 1, i + 1);
+            //t6.insert(i + 1, i + 1);
         }
 
-        System.out.println("\n\n=======ORDER4=======");
+        /*System.out.println("\n\n=======ORDER4=======");
         t4.print();
-        testDelete(t4, verbose, numInserts);
+        testDelete(t4, verbose, numInserts);*/
 
-        /*System.out.println("\n\n=======ORDER5=======");
+        System.out.println("\n\n=======ORDER5=======");
         t5.print();
         testDelete(t5, verbose, numInserts);
 
-        System.out.println("\n\n=======ORDER6=======");
+        /*System.out.println("\n\n=======ORDER6=======");
         t6.print();
-        testDelete(t6, verbose, numInserts);
+        testDelete(t6, verbose, numInserts);*/
 
 
         double val = 5 / (double) 2;
         System.out.println(val);
         System.out.println(Math.ceil(val));
-        System.out.println(Math.ceil(val)-1);*/
+        System.out.println(Math.ceil(val)-1);
     }
 
 
