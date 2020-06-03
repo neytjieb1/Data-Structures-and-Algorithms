@@ -88,7 +88,7 @@ public class Main {
             } else {
                 System.out.println("\ni = " + i);
             }
-            if (i==74) {
+            if (i==168) {
                 System.out.println('x');
             }
             tree.delete(delVal);

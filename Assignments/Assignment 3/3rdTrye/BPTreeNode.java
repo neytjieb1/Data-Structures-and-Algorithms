@@ -1,3 +1,5 @@
+import java.util.zip.CheckedOutputStream;
+
 /**
  * A B+ tree generic node
  * Abstract class with common methods and data. Each kind of node implements this class.
@@ -810,26 +812,37 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
 
     private void updateParentLinkages(int i, BPTreeInnerNode<TKey, TValue> parent) {
         //update linkages //will be overwriting i
-        BPTreeNode<TKey, TValue> newNode;
+        BPTreeNode<TKey, TValue> mChild;
         if (i == 0) {
-            newNode = parent.getChild(i + 1);
-            newNode.leftSibling = parent.getChild(i).leftSibling;
-            if (newNode.rightSibling != null) {
-                newNode.rightSibling.leftSibling = newNode;//parent.getChild(i).leftSibling;
+            mChild = parent.getChild(i + 1);
+            mChild.leftSibling = parent.getChild(i).leftSibling;
+            if (mChild.rightSibling != null) {
+                mChild.rightSibling.leftSibling = mChild;//parent.getChild(i).leftSibling;
             }
-            newNode.rightSibling = parent.getChild(i + 2); //added in
+            mChild.rightSibling = parent.getChild(i + 2); //added in
         } else if (i == parent.keyTally) {
-            newNode = parent.getChild(i - 1);
-            newNode.rightSibling = parent.getChild(i).rightSibling;
+            mChild = parent.getChild(i - 1);
+            mChild.rightSibling = parent.getChild(i).rightSibling;
             if (parent.getChild(i).rightSibling != null) {
-                parent.getChild(i).rightSibling = newNode;
-                //parent.getChild(i).rightSibling.leftSibling = newNode
+                parent.getChild(i).rightSibling = mChild;
+                //parent.getChild(i).rightSibling.leftSibling = mChild
             }
         } else {
-            newNode = parent.getChild(i);
-            if (newNode != null) {
-                if (newNode.leftSibling != null) newNode.leftSibling.rightSibling = newNode.rightSibling;
-                if (newNode.rightSibling != null) newNode.rightSibling.leftSibling = newNode.leftSibling;
+            mChild = parent.getChild(i);
+            BPTreeNode<TKey, TValue> lChild;
+            BPTreeNode<TKey, TValue> rChild;
+            if (mChild != null) {
+                if (i!=0) {
+                    lChild = parent.getChild(i-1);
+                    lChild.rightSibling = mChild.rightSibling;
+                }
+                if (i<parent.keyTally) {
+                    rChild = parent.getChild(i+1);
+                    rChild.leftSibling = mChild.leftSibling;
+                }
+                /*
+                if (mChild.leftSibling != null) mChild.leftSibling.rightSibling = mChild.rightSibling;
+                if (mChild.rightSibling != null) mChild.rightSibling.leftSibling = mChild.leftSibling;*/
             }
         }
     }
@@ -870,11 +883,10 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         if (i != 0) {
             TKey keyx = (TKey) parent.keys[i - 1];
             TKey keyy = (TKey) parent.getChild(i - 1).keys[parent.getChild(i - 1).keyTally - 1];
-            if (keyy.equals(keyx)) {
+            if ( ((Comparable)keyx).compareTo((Comparable)keyy)<=0) {
                 parent.keys[i-1] = parent.keys[i];
             }
         }
-
 
         for (int j = i; j < parent.keyTally; j++) {
             parent.keys[j] = parent.keys[j + 1];
