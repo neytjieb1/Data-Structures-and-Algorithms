@@ -724,7 +724,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
                 sibling = parent.getChild(i + 1);
                 //insert sibling into node and then shift around
                 insertValsLeafNode(node, sibling);
-                node.rightSibling = sibling.rightSibling;
+                //node.rightSibling = sibling.rightSibling;
                 parent.setChild(i + 1, node);
                 //update parent
                 updateParent(i, (BPTreeInnerNode<TKey, TValue>) parent);
@@ -819,7 +819,15 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
             if (mChild.rightSibling != null) {
                 mChild.rightSibling.leftSibling = mChild;//parent.getChild(i).leftSibling;
             }
-            mChild.rightSibling = parent.getChild(i + 2); //added in
+            boolean one = parent.getChild(i+2)==null;
+            boolean two = mChild.rightSibling!=null;
+            //mChild.rightSibling = parent.getChild(i + 2); //added in
+            if (one && two) {
+                mChild.rightSibling = mChild.rightSibling.rightSibling;
+            }
+            else {
+                mChild.rightSibling = parent.getChild(i + 2); //added in
+            }
         } else if (i == parent.keyTally) {
             mChild = parent.getChild(i - 1);
             mChild.rightSibling = parent.getChild(i).rightSibling;
@@ -883,7 +891,7 @@ abstract class BPTreeNode<TKey extends Comparable<TKey>, TValue> {
         if (i != 0) {
             TKey keyx = (TKey) parent.keys[i - 1];
             TKey keyy = (TKey) parent.getChild(i - 1).keys[parent.getChild(i - 1).keyTally - 1];
-            if ( ((Comparable)keyx).compareTo((Comparable)keyy)<=0) {
+            if (keyx!=null && keyy!=null && ((Comparable)keyx).compareTo((Comparable)keyy)<=0) {
                 parent.keys[i-1] = parent.keys[i];
             }
         }
