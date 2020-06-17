@@ -8,7 +8,7 @@ public class Vertex implements Comparable<Vertex> {
     private String name;
     private Edge[] adjacenciesList;
     private int adjacenciesCount;
-    private double distance = Double.POSITIVE_INFINITY;
+    private Integer distance = Integer.MAX_VALUE;
     public int numNeighbours;
 
     private boolean visited = false;
@@ -31,7 +31,7 @@ public class Vertex implements Comparable<Vertex> {
             Edge e = this.adjacenciesList[i];
             temp.adjacenciesList[i] = new Edge(e.getStartVertex(), e.getEndVertex(), e.getWeight());
         }
-        //Vertex startVertex, Vertex endVertex, double weight
+        //Vertex startVertex, Vertex endVertex, Integer weight
 
 
 
@@ -43,7 +43,6 @@ public class Vertex implements Comparable<Vertex> {
     public void addNeighbour(Edge edge) {
         this.adjacenciesList[numNeighbours++] = edge;
         this.adjacenciesCount++;
-        this.numNeighbours++;
     }
 
     public String getName() {
@@ -64,11 +63,11 @@ public class Vertex implements Comparable<Vertex> {
         this.adjacenciesList = adjList;
     }
 
-    public double getDistance() {
+    public Integer getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(Integer distance) {
         this.distance = distance;
     }
 
@@ -95,6 +94,6 @@ public class Vertex implements Comparable<Vertex> {
 
     @Override
     public int compareTo(Vertex otherVertex) {
-        return Double.compare(this.distance, otherVertex.getDistance());
+        return Integer.compare(this.distance, otherVertex.getDistance());
     }
 }

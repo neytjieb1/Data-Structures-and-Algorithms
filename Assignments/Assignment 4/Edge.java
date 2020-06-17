@@ -7,9 +7,9 @@ public class Edge {
 
     private Vertex startVertex;
     private Vertex endVertex;
-    private double weight;
+    private Integer weight;
 
-    public Edge(Vertex startVertex, Vertex endVertex, double weight) {
+    public Edge(Vertex startVertex, Vertex endVertex, Integer weight) {
         this.startVertex = startVertex;
         this.endVertex = endVertex;
         this.weight = weight;
@@ -31,11 +31,11 @@ public class Edge {
         this.endVertex = endVertex;
     }
 
-    public double getWeight() {
+    public Integer getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
 }
