@@ -8,11 +8,13 @@ public class Edge {
     private Vertex startVertex;
     private Vertex endVertex;
     private Integer weight;
+    public boolean traversed;
 
     public Edge(Vertex startVertex, Vertex endVertex, Integer weight) {
         this.startVertex = startVertex;
         this.endVertex = endVertex;
         this.weight = weight;
+        this.traversed = false;
     }
 
     public Vertex getStartVertex() {

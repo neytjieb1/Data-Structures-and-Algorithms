@@ -146,6 +146,27 @@ public class Main {
                             "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
                             "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt"};
         Graph g = new Graph(filenames[5]);
+        System.out.println("Using edgeList");
+        g.printEdgesUsingList();
+        System.out.println("Using Adjacencies");
+        g.printEdgesUsingAdjacencies();
+
+        System.out.println("\nCLONE GRAPH");
+        Graph clone = g.clone();
+        System.out.println("Using edgeList");
+        clone.printEdgesUsingList();
+        System.out.println("Using Adjacencies");
+        clone.printEdgesUsingAdjacencies();
+
+        System.out.println("\nGETTING POSTMANGRAPH");
+        Graph adjustedG = g.getChinesePostmanGraph();
+        System.out.println(g.getChinesePostmanCost());
+        System.out.println("Using edgeList");
+        adjustedG.printEdgesUsingList();
+        System.out.println("Using Adjacencies");
+        adjustedG.printEdgesUsingAdjacencies();
+
+        System.out.println(adjustedG.getChinesePostmanRoute("A"));
 
         /*for (int i = 1; i < filenames.length+1; i++) {
             System.out.println("=======NEW SKETCH " + i + "============");
@@ -164,10 +185,6 @@ public class Main {
         }*/
 
 
-        Graph adjustedg = g.getChinesePostmanGraph();
-        adjustedg.printAdjacencyM();
-        adjustedg.printNextM();
-        System.out.println(g.getChinesePostmanCost());
 
 
     }

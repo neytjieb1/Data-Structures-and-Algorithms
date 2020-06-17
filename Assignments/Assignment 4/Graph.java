@@ -20,8 +20,9 @@ public class Graph {
     private Integer numE = 0;
     private Vertex[] verticesList;
     private String[] vertexNames;
+    private Edge[] edgeList;
     public Matrix adjacency;
-    private Integer finalWeight = Integer.MIN_VALUE;
+    private Integer finalPostmanWeight = Integer.MIN_VALUE;
 
     /**
      * The constructor receives the name of the file from which a graph
@@ -33,6 +34,7 @@ public class Graph {
         String[][] lines = readFile(f);
         this.verticesList = new Vertex[this.numV];
         this.vertexNames = new String[this.numV];
+        this.edgeList = new Edge[(numE*(numE-1))/2]; // #edges in complete graph, which is max it will ever take
         if (lines != null) {
             constructGraph(lines);
             this.adjacency = new Matrix(numV, numE, verticesList);
@@ -40,11 +42,12 @@ public class Graph {
 
     }
 
-    private Graph(int numV, int numE, Vertex[] vList, String vNames[], Matrix adj) {
+    private Graph(int numV, int numE, Vertex[] vList, String vNames[], Edge[] eList, Matrix adj) {
         this.numV = numV;
         this.numE = numE;
         this.verticesList = vList;
         this.vertexNames = vNames;
+        this.edgeList = eList;
         this.adjacency = adj;
     }
 
@@ -71,14 +74,14 @@ public class Graph {
             this.vertexNames[insertedVs] = sorted[insertedVs];
             this.verticesList[insertedVs] = new Vertex(sorted[insertedVs++]);
         }
-
+        int insertedEs = 0;
         for (int i = 0; i < this.numE; i++) {
             //add edge
             Vertex start = this.verticesList[contains(lines[i][0], this.vertexNames)];
             Vertex end = this.verticesList[contains(lines[i][1], this.vertexNames)];
             Integer weight = Integer.valueOf(lines[i][2]);
-            start.addNeighbour(new Edge(start, end, weight));
-            //end.addNeighbour(new Edge(end,start, weight)); //since undirected  //NO! CANNOT EDGE
+            edgeList[insertedEs] = new Edge(start, end, weight);
+            start.addNeighbour(edgeList[insertedEs++]);
         }
     }
 
@@ -147,10 +150,27 @@ public class Graph {
         int numE = this.numE;
         Vertex[] vList = new Vertex[verticesList.length];
         String[] vNames = new String[vertexNames.length];
-        int[][] data = this.adjacency.getData();
+        Edge[] eList = new Edge[this.edgeList.length];
 
-        int insertedVs = 0;
-        for (int start = 0; start < vNames.length; start++) {
+        for (int i = 0; i < this.verticesList.length; i++) {
+            vNames[i] = this.vertexNames[i];
+            vList[i] = new Vertex(this.verticesList[i].getName());
+        }
+        int insertedEs = 0;
+        for (int i = 0; i < this.vertexNames.length; i++) {
+            Vertex oldV = this.verticesList[i];
+            for (int j = 0; j < oldV.getAdjacenciesCount() ; j++) {
+                Edge e = oldV.getAdjacenciesList()[j];
+                Vertex start = vList[contains(e.getStartVertex().getName(), vNames)];
+                Vertex end = vList[contains(e.getEndVertex().getName(), vNames)];
+                Integer weight = e.getWeight();
+                Edge newE = new Edge(start, end, weight);
+                vList[i].addNeighbour(newE);
+                eList[insertedEs++] = newE;
+            }
+        }
+
+        /*for (int start = 0; start < vNames.length; start++) {
             for (int end = 0; end < vNames.length; end++) {
                 //no important infor here
                 if (data[start][end] == Integer.MAX_VALUE) continue;
@@ -169,15 +189,14 @@ public class Graph {
                     Vertex startV = vList[contains(this.vertexNames[start], vNames)];
                     Vertex endV = vList[contains(this.vertexNames[end], vNames)];
                     Integer w = data[start][end];
-                    startV.addNeighbour(new Edge(startV, endV, w));
-                    endV.addNeighbour(new Edge(endV, startV, w)); //Not necessary since data is symmetric
-                    //Otherwise adding Integer
+                    eList[insertedEs] = new Edge(startV, endV, w);
+                    startV.addNeighbour(eList[insertedEs]);
                 }
             }
-        }
+        }*/
 
         Matrix adj = new Matrix(numV, numE, vList);
-        Graph clone = new Graph(numV, numE, vList, vNames, adj);
+        Graph clone = new Graph(numV, numE, vList, vNames, eList, adj);
 
         return clone;
     }
@@ -463,10 +482,10 @@ public class Graph {
      * route determined by your algorithm.
      */
     public int getChinesePostmanCost() {
-        if (this.finalWeight.equals(Integer.MIN_VALUE)) {
+        if (this.finalPostmanWeight.equals(Integer.MIN_VALUE)) {
             this.getChinesePostmanGraph();
         }
-        return this.finalWeight;
+        return this.finalPostmanWeight;
     }
 
     /**
@@ -475,13 +494,13 @@ public class Graph {
      */
     public Graph getChinesePostmanGraph() {
         String[] oddEdges = getOdd().split(",");
-        String oddE = String.join("", oddEdges);
+        //String oddE = String.join("", oddEdges);
         if (oddEdges.equals("")) {
             return this;
         } else {
             Graph clone = this.clone();
             //get total weight (since I've constructed digraph with two directions every time)
-            this.finalWeight = getTotalGraphWeight();
+            this.finalPostmanWeight = getTotalGraphWeight();
             //create array of pairings
             int n_P_n = factorial(oddEdges.length);
             String[][] weightsAndPairings = new String[n_P_n][oddEdges.length / 2 + 1];
@@ -494,14 +513,16 @@ public class Graph {
                     Vertex start = clone.verticesList[contains(addOns[k], clone.vertexNames)];
                     Vertex end = clone.verticesList[contains(addOns[k + 1], clone.vertexNames)];
                     Integer weight = findEdgeWeight(start, end);
-                    start.addNeighbour(new Edge(start, end, weight));
+                    clone.edgeList[clone.numE] = new Edge(start, end, weight);
+                    start.addNeighbour(clone.edgeList[clone.numE++]);
                     System.out.println("adding " + start.getName() + "-" + end.getName() );
                 }
             }
-            System.out.println("Start weight= " + finalWeight);
+            System.out.println("Start weight= " + finalPostmanWeight);
             System.out.println("Add weight = " + Integer.valueOf(Integer.valueOf(weightsAndPairings[minIndex][oddEdges.length / 2]))) ;
-            this.finalWeight += Integer.valueOf(Integer.valueOf(weightsAndPairings[minIndex][oddEdges.length / 2]));
-            System.out.println("New weight: " + finalWeight);
+            this.finalPostmanWeight += Integer.valueOf(Integer.valueOf(weightsAndPairings[minIndex][oddEdges.length / 2]));
+            clone.finalPostmanWeight = this.finalPostmanWeight;
+            System.out.println("New weight: " + clone.finalPostmanWeight);
             clone.adjacency = new Matrix(clone.numV, clone.numE, clone.verticesList);
             return clone;
         }
@@ -603,15 +624,55 @@ public class Graph {
      * back to v. If there are vertices with odd degrees, return "not available".
      * Otherwise, return a list of vertices starting and ending in v.
      * When there are alternative paths, choose the next vertex in alphabetical order.
-     * <p>
      * The list must be separated by commas containing no additional
      * white space.
      */
     public String getChinesePostmanRoute(String v) {
+        String out = v;
         if (getOdd().equals("")) {
             return "not available";
         }
-        return null;
-
+        int index = contains(v, this.vertexNames);
+        Vertex point = this.verticesList[index];
+        for (int i = 0; i < this.verticesList.length; i++) {
+            Edge e = findEdgeBetween(point.getName(), this.vertexNames[i]);
+            if (e!=null && e.getWeight()!=0) {
+                e.traversed = true;
+                out += "," + this.vertexNames[i];
+                point = this.verticesList[i];
+                out = getChinesePostmanRoute(point, out);
+            }
+        }
+        return out;
     }
+
+    private String getChinesePostmanRoute(Vertex v, String out) {
+        Edge[] adjList = v.getAdjacenciesList();
+        for (int i = 0; i < this.verticesList.length; i++) {
+            Edge e = findEdgeBetween(v.getName(), this.vertexNames[i]);
+            if (e!=null && !e.traversed) {
+                e.traversed = true;
+                out += "," + this.vertexNames[i];
+                v = this.verticesList[i];
+                out = getChinesePostmanRoute(v, out);
+            }
+        }
+        return out;
+    }
+
+    public void printEdgesUsingList() {
+        for (int i = 0; i < numE; i++) {
+            System.out.println(edgeList[i].getStartVertex() + "-" + edgeList[i].getEndVertex() + " " + edgeList[i].getWeight());
+        }
+    }
+
+    public void printEdgesUsingAdjacencies() {
+        for (int i = 0; i < this.verticesList.length; i++) {
+            Edge[] eList= this.verticesList[i].getAdjacenciesList();
+            for (int j = 0; j < this.verticesList[i].getAdjacenciesCount(); j++) {
+                System.out.println(eList[j].getStartVertex() + "-" + eList[j].getEndVertex() + " " + eList[j].getWeight());
+            }
+        }
+    }
+
 }
