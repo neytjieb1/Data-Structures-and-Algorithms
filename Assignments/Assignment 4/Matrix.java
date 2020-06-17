@@ -10,7 +10,6 @@ public class Matrix {
         this.V = numV;
         this.E = numE;
         this.verticesList = vList;
-//        this.vertexNames = vNames;
         constructMatrix(this.V);
     }
 
