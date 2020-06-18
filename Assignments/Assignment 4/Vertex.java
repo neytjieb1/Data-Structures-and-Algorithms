@@ -6,8 +6,8 @@
 public class Vertex implements Comparable<Vertex> {
 
     private String name;
-    private Edge[] adjacenciesList;
-    private int adjacenciesCount;
+     Edge[] adjacenciesList;
+     int adjacenciesCount;
     private Integer distance = Integer.MAX_VALUE;
     public int numNeighbours;
 

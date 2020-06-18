@@ -145,8 +145,8 @@ public class Main {
                             "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
                             "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
                             "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt"};
-        Graph g = new Graph(filenames[5]);
-        System.out.println("Using edgeList");
+        Graph g = new Graph(filenames[0]);
+        /*System.out.println("Using edgeList");
         g.printEdgesUsingList();
         System.out.println("Using Adjacencies");
         g.printEdgesUsingAdjacencies();
@@ -166,23 +166,23 @@ public class Main {
         System.out.println("Using Adjacencies");
         adjustedG.printEdgesUsingAdjacencies();
 
-        System.out.println(adjustedG.getChinesePostmanRoute("A"));
+        System.out.println(adjustedG.getChinesePostmanRoute("A"));*/
 
-        /*for (int i = 1; i < filenames.length+1; i++) {
+        for (int i = 1; i < filenames.length+1; i++) {
             System.out.println("=======NEW SKETCH " + i + "============");
-            g.printAdjacencyM();
-            g.printNextM();
-            testShortestPath(g, i);
-            testClone(g);
-            theDegree(g);
-            oddOrEven(g);
-            numberEdges(g);
+            //g.printAdjacencyM();
+            //g.printNextM();
+//            testShortestPath(g, i);
+            //testClone(g);
+//            theDegree(g);
+//            oddOrEven(g);
+//            numberEdges(g);
             deepDive(g);
             System.out.println(g.getTotalGraphWeight());
             if (i!=filenames.length) {
                 g = newConstructions(g, filenames[i], verbose);
             }
-        }*/
+        }
 
 
 

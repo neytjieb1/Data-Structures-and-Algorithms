@@ -122,14 +122,6 @@ public class Graph {
                 this.numE++;
                 i++;
             }
-            /*
-            for (int j = 0; j < i; j++) {
-                for (int k = 0; k < 3; k++) {
-                    System.out.print(lines[j][k] + " ");
-                }
-                System.out.println("");
-            }
-             */
             return lines;
 
         } catch (FileNotFoundException e) {
@@ -169,32 +161,6 @@ public class Graph {
                 eList[insertedEs++] = newE;
             }
         }
-
-        /*for (int start = 0; start < vNames.length; start++) {
-            for (int end = 0; end < vNames.length; end++) {
-                //no important infor here
-                if (data[start][end] == Integer.MAX_VALUE) continue;
-                    //vertex to be added
-                else {
-                    //Add both vertices
-                    if (contains(this.vertexNames[start], vNames) == -1) {
-                        vNames[insertedVs] = this.vertexNames[start];
-                        vList[insertedVs++] = new Vertex(this.vertexNames[start]);
-                    }
-                    if (contains(this.vertexNames[end], vNames) == -1) {
-                        vNames[insertedVs] = this.vertexNames[end];
-                        vList[insertedVs++] = new Vertex(this.vertexNames[end]);
-                    }
-                    //add edge between vertices
-                    Vertex startV = vList[contains(this.vertexNames[start], vNames)];
-                    Vertex endV = vList[contains(this.vertexNames[end], vNames)];
-                    Integer w = data[start][end];
-                    eList[insertedEs] = new Edge(startV, endV, w);
-                    startV.addNeighbour(eList[insertedEs]);
-                }
-            }
-        }*/
-
         Matrix adj = new Matrix(numV, numE, vList);
         Graph clone = new Graph(numV, numE, vList, vNames, eList, adj);
 
@@ -213,11 +179,13 @@ public class Graph {
         this.numE = 0;
         this.verticesList = null;
         this.vertexNames = null;
+        this.edgeList = null;
 
         //start over
         String[][] lines = readFile(fileName);
         this.verticesList = new Vertex[this.numV]; //overwrites
         this.vertexNames = new String[this.numV];
+        this.edgeList = new Edge[this.numE];
         if (lines != null) {
             constructGraph(lines);
             this.adjacency = new Matrix(numV, numE, verticesList);
@@ -277,7 +245,7 @@ public class Graph {
         for (int i = 0; i < this.vertexNames.length; i++) {
             if (u.equals(this.vertexNames[i])) continue;
             else {
-                Edge e = findEdgeBetween(u, this.vertexNames[i]);
+                Edge e = findEdgeBetween(u, this.vertexNames[i], false);
                 if (e!=null) deg++;
             }
         }
@@ -296,21 +264,29 @@ public class Graph {
         return deg;*/
     }
 
-    private Edge findEdgeBetween(String one, String two) {
+    private Edge findEdgeBetween(String one, String two, boolean checkTraversed) {
         Vertex v = this.verticesList[contains(one, this.vertexNames)];
         Vertex u = this.verticesList[contains(two, this.vertexNames)];
         //one side
         Edge[] adj = v.getAdjacenciesList();
         for (int i = 0; i < v.getAdjacenciesCount(); i++) {
             if (adj[i].getEndVertex().getName().equals(u.getName())) {
-                return adj[i];
+                if (checkTraversed) {
+                    if (adj[i].traversed) continue;
+                    else return adj[i];
+                }
+                else return adj[i];
             }
         }
         //second side
         adj = u.getAdjacenciesList();
         for (int i = 0; i < u.getAdjacenciesCount(); i++) {
             if (adj[i].getEndVertex().getName().equals(v.getName())) {
-                return adj[i];
+                if (checkTraversed) {
+                    if (adj[i].traversed) continue;
+                    else return adj[i];
+                }
+                else return adj[i];
             }
         }
         return null;
@@ -349,7 +325,7 @@ public class Graph {
         //first traverse according to v and then
         String out = "";
         out += DFS(this.verticesList[contains(v, vertexNames)], out);
-        //traverse according to while
+        //traverse according to rest
         int i;
         while ((i = numVisZero()) != -1) {
             out += DFS(this.verticesList[contains(this.vertexNames[i], vertexNames)], out);
@@ -359,7 +335,19 @@ public class Graph {
 
     private String DFS(Vertex v, String out) {
         out += v.getName() + " ";
+        numDFSV[contains(v.getName(), this.vertexNames)] = 0;
+        for (int i = 0; i < this.vertexNames.length; i++) {
+            if (numVisZero()==-1) return out;
+            for (int j = 0; j < this.vertexNames.length; j++) {
+                if (numDFSV[contains(this.vertexNames[j], this.vertexNames)] == null &&  findEdgeBetween(v.getName(), this.vertexNames[j], false)!=null) {
+                    out = DFS(this.verticesList[j], out);
+                }
+            }
+        }
+        return out;
+        /*out += v.getName() + " ";
         numDFSV[contains(v.getName(), vertexNames)] = 0;
+        
         Edge[] adjList = v.getAdjacenciesList();
         //loop through every vertex
         for (int i = 0; i < this.vertexNames.length; i++) {
@@ -370,7 +358,7 @@ public class Graph {
                 }
             }
         }
-        return out;
+        return out;*/
     }
 
     private int numVisZero() {
@@ -628,36 +616,119 @@ public class Graph {
      * white space.
      */
     public String getChinesePostmanRoute(String v) {
-        String out = v;
         if (getOdd().equals("")) {
             return "not available";
         }
         int index = contains(v, this.vertexNames);
-        Vertex point = this.verticesList[index];
-        for (int i = 0; i < this.verticesList.length; i++) {
-            Edge e = findEdgeBetween(point.getName(), this.vertexNames[i]);
-            if (e!=null && e.getWeight()!=0) {
+        Vertex start = this.verticesList[index];
+        String out = v;
+
+        // Recur for all the vertices adjacent to this vertex
+        for (int i = 0; i < this.verticesList.length; i++)
+        {
+            Edge e = findEdgeBetween(start.getName(), this.vertexNames[i], false);
+            if (e==null) continue;
+            // If edge u-v is a valid next edge
+            else if (isValidNextEdge(start, this.verticesList[i]))
+            {
+                out += "," + this.verticesList[i].getName();
+                // This edge is used so remove it now
                 e.traversed = true;
-                out += "," + this.vertexNames[i];
-                point = this.verticesList[i];
-                out = getChinesePostmanRoute(point, out);
+
+                out = getChinesePostmanRoute(this.verticesList[i], out);
             }
         }
         return out;
     }
 
-    private String getChinesePostmanRoute(Vertex v, String out) {
-        Edge[] adjList = v.getAdjacenciesList();
-        for (int i = 0; i < this.verticesList.length; i++) {
-            Edge e = findEdgeBetween(v.getName(), this.vertexNames[i]);
-            if (e!=null && !e.traversed) {
+    private String getChinesePostmanRoute(Vertex u, String out) {
+        // Recur for all the vertices adjacent to this vertex
+        for (int i = 0; i < this.verticesList.length; i++)
+        {
+            Edge e = findEdgeBetween(u.getName(), this.getVertexNames()[i], true);
+            if (e==null || e.traversed) continue;
+            // If edge u-v is a valid next edge
+            else if (isValidNextEdge(u, this.verticesList[i]))
+            {
+                out += "," + this.verticesList[i].getName();
+                // This edge is used so remove it now
                 e.traversed = true;
-                out += "," + this.vertexNames[i];
-                v = this.verticesList[i];
-                out = getChinesePostmanRoute(v, out);
+                getChinesePostmanRoute(this.verticesList[i], out);
             }
         }
         return out;
+    }
+
+
+    private boolean isValidNextEdge(Vertex u, Vertex v)
+    {
+        //valid if
+        // 1) If v is the only adjacent vertex of u
+        // ie size of adjacent vertex list is 1
+        int count = 0;
+        for (int i = 0; i < u.getAdjacenciesCount(); i++) {
+            if (u.getAdjacenciesList()[i].traversed) continue;
+            else count++;
+        }
+        for (int i = 0; i < v.getAdjacenciesCount(); i++) {
+            if (v.getAdjacenciesList()[i].getEndVertex().getName().equals(u.getName())) count++;
+        }
+        if (count==1) {
+            return true;
+        }
+
+        //Determine if Bridge
+        //a) count of vertices reachable from u
+        int count1 = depthFirstTraversal(u.getName()).length();
+        Edge e = findEdgeBetween(u.getName(), v.getName(), false);
+
+        //b) Remove edge (u, v) and count again
+        int whichOne = removeEdge(u, v, e);
+        int count2 = depthFirstTraversal(u.getName()).length();
+
+        // 2.c) Add the edge back to the graph
+        if (whichOne==0) {
+            int i = 0;
+            while (true) {
+                if (u.getAdjacenciesList()[i] != null) i++;
+                else {
+                    u.adjacenciesList[i] = e;
+                    u.adjacenciesCount++;
+                    break;
+                }
+            }
+        }
+        else {
+            int i = 0;
+            while (true) {
+                if (v.getAdjacenciesList()[i] != null) i++;
+                else {
+                    v.adjacenciesList[i] = e;
+                    v.adjacenciesCount++;
+                    break;
+                }
+            }
+        }
+        //did it change?
+        return (count1 > count2) ? false : true;
+    }
+
+    private int removeEdge(Vertex u, Vertex v, Edge e) {
+        for (int i = 0; i < u.getAdjacenciesCount(); i++) {
+            if (u.getAdjacenciesList()[i].getEndVertex().getName().equals(v.getName())) {
+                u.adjacenciesList[i] = u.adjacenciesList[--u.adjacenciesCount];
+                u.adjacenciesList[u.adjacenciesCount] = null;
+                return 0;
+            }
+        }
+        for (int i = 0; i < v.getAdjacenciesCount(); i++) {
+            if (v.getAdjacenciesList()[i].getEndVertex().getName().equals(u.getName())) {
+                v.adjacenciesList[i] = v.adjacenciesList[--v.adjacenciesCount];
+                v.adjacenciesList[v.adjacenciesCount] = null;
+                return 1;
+            }
+        }
+        return -1;
     }
 
     public void printEdgesUsingList() {
