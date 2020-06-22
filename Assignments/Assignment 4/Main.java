@@ -32,6 +32,10 @@ public class Main {
         g.printAdjacencyM();
         System.out.println("The Original before changing");
         clone.printAdjacencyM();
+
+        //reset for later tests
+        g.changeLabel("a","A");
+        g.changeLabel("b", "B");
     }
 
     public static Graph newConstructions(Graph g, String filepath, boolean verbose) throws IOException {
@@ -133,20 +137,8 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        /*PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass4/outputB.txt"));
-        System.setOut(out);*/
-        System.out.println("On the road!");
-        String[] filenames = {"/home/jo/IdeaProjects/Ass4/graphs/graph.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph2.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph3.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph4.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph5.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt"};
-        Graph g = new Graph(filenames[0]);
-        /*System.out.println("Using edgeList");
+    public static void testEdgePrintings(Graph g) {
+        System.out.println("Using edgeList");
         g.printEdgesUsingList();
         System.out.println("Using Adjacencies");
         g.printEdgesUsingAdjacencies();
@@ -157,35 +149,53 @@ public class Main {
         clone.printEdgesUsingList();
         System.out.println("Using Adjacencies");
         clone.printEdgesUsingAdjacencies();
+    }
 
+    public static void testPostmanPaths(Graph g) {
         System.out.println("\nGETTING POSTMANGRAPH");
         Graph adjustedG = g.getChinesePostmanGraph();
         System.out.println(g.getChinesePostmanCost());
-        System.out.println("Using edgeList");
-        adjustedG.printEdgesUsingList();
-        System.out.println("Using Adjacencies");
-        adjustedG.printEdgesUsingAdjacencies();
+        System.out.println();
+        if (!adjustedG.getVertexNames()[0].equals("A")) {
+            System.out.println(adjustedG.getChinesePostmanRoute("SP"));
+        }
+        else {
+            System.out.println(adjustedG.getChinesePostmanRoute("B"));
+        }
+    }
 
-        System.out.println(adjustedG.getChinesePostmanRoute("A"));*/
+    public static void main(String[] args) throws IOException {
+        /*PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass4/graphs/outputB.txt"));
+        System.setOut(out);*/
+        System.out.println("On the road!");
+        String[] filenames = {"/home/jo/IdeaProjects/Ass4/graphs/graph.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph2.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph3.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph4.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph5.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt",
+                            "/home/jo/IdeaProjects/Ass4/graphs/graph9.txt"};
 
+
+        Graph g = new Graph(filenames[1]);
         for (int i = 1; i < filenames.length+1; i++) {
             System.out.println("=======NEW SKETCH " + i + "============");
-            //g.printAdjacencyM();
-            //g.printNextM();
-//            testShortestPath(g, i);
-            //testClone(g);
-//            theDegree(g);
-//            oddOrEven(g);
-//            numberEdges(g);
+            g.printAdjacencyM();
+            g.printNextM();
+            testShortestPath(g, i);
+            testClone(g);
+            theDegree(g);
+            oddOrEven(g);
+            numberEdges(g);
             deepDive(g);
-            System.out.println(g.getTotalGraphWeight());
+            testPostmanPaths(g);
+            //System.out.println(g.getTotalGraphWeight());
+            System.out.println("Chinese postman cost: " + g.getChinesePostmanCost());
             if (i!=filenames.length) {
                 g = newConstructions(g, filenames[i], verbose);
             }
         }
-
-
-
-
     }
 }
