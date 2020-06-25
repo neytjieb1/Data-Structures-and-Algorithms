@@ -59,13 +59,6 @@ public class Matrix {
                         next[i][j] = next[i][k];
                         //next[j][i] = next[i][k];
                     }
-                    /*
-                    if (dist[i][k] + dist[k][j] < dist[i][j]) { //if on shortest path then update value
-                        dist[i][j] = dist[i][k] + dist[k][j];
-                        next[i][j] = next[i][k];
-                    }
-                     */
-
                 }
             }
         }

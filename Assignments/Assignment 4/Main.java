@@ -1,7 +1,6 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
 
 /**
  * Name and Surname: BL Nortier
@@ -11,7 +10,7 @@ import java.util.Arrays;
 
 public class Main {
 
-    private static boolean verbose=false;
+    private static boolean verbose = false;
 
     public static void testClone(Graph g) {
         System.out.println("Cloning Graph");
@@ -28,13 +27,13 @@ public class Main {
             }
         }
         //Test Clone after a change to the matrix
-        System.out.println("See how the labels changed");
+        /*System.out.println("See how the labels changed");
         g.printAdjacencyM();
         System.out.println("The Original before changing");
-        clone.printAdjacencyM();
+        clone.printAdjacencyM();*/
 
         //reset for later tests
-        g.changeLabel("a","A");
+        g.changeLabel("a", "A");
         g.changeLabel("b", "B");
     }
 
@@ -80,10 +79,9 @@ public class Main {
     public static void oddOrEven(Graph g) {
         //getOdd
         String numberOddE = g.getOdd();
-        if (numberOddE.length()==0) {
+        if (numberOddE.length() == 0) {
             System.out.println("No odd edges");
-        }
-        else {
+        } else {
             System.out.println("Odd edges as follows: ");
             System.out.println(g.getOdd() + "x");
         }
@@ -92,47 +90,57 @@ public class Main {
     public static void testShortestPath(Graph g, int i) {
         switch (i) {
             case 1:
-                System.out.println("Shortest Path between B and C");
-                System.out.println(g.getPath("B","C"));
-                System.out.println("Length: " + g.getShortestDistance("B","C"));
+                System.out.println("Shortest Path between A and B");
+                System.out.println(g.getPath("A", "B"));
+                System.out.println("Length: " + g.getShortestDistance("A", "B"));
                 break;
             case 2:
                 System.out.println("Shortest Path between A and E");
-                System.out.println(g.getPath("A","E"));
-                System.out.println("Length: " + g.getShortestDistance("A","E"));
+                System.out.println(g.getPath("A", "E"));
+                System.out.println("Length: " + g.getShortestDistance("A", "E"));
                 break;
             case 3:
                 System.out.println("Shortest Path between A and K");
-                System.out.println(g.getPath("A","K"));
-                System.out.println("Length: " + g.getShortestDistance("A","K"));
+                System.out.println(g.getPath("A", "K"));
+                System.out.println("Length: " + g.getShortestDistance("A", "K"));
                 break;
             case 4:
                 System.out.println("Shortest Path between A and F");
-                System.out.println(g.getPath("A","F"));
-                System.out.println("Length: " + g.getShortestDistance("A","F"));
+                System.out.println(g.getPath("A", "F"));
+                System.out.println("Length: " + g.getShortestDistance("A", "F"));
                 break;
             case 5:
                 System.out.println("Shortest Path between A and D");
-                System.out.println(g.getPath("A","D"));
-                System.out.println("Length: " + g.getShortestDistance("A","D"));
+                System.out.println(g.getPath("A", "D"));
+                System.out.println("Length: " + g.getShortestDistance("A", "D"));
                 break;
             case 6:
                 System.out.println("Shortest Path between C and B");
-                System.out.println(g.getPath("C","B"));
-                System.out.println("Length: " + g.getShortestDistance("C","B"));
+                System.out.println(g.getPath("C", "B"));
+                System.out.println("Length: " + g.getShortestDistance("C", "B"));
                 break;
             case 7:
                 System.out.println("Shortest Path between D and B");
-                System.out.println(g.getPath("D","B"));
-                System.out.println("Length: " + g.getShortestDistance("D","B"));
+                System.out.println(g.getPath("D", "B"));
+                System.out.println("Length: " + g.getShortestDistance("D", "B"));
                 break;
             case 8:
                 System.out.println("Shortest Path between F and A");
-                System.out.println(g.getPath("F","A"));
-                System.out.println("Length: " + g.getShortestDistance("F","A"));
+                System.out.println(g.getPath("F", "A"));
+                System.out.println("Length: " + g.getShortestDistance("F", "A"));
                 System.out.println("Similarly: A and F");
-                System.out.println(g.getPath("A","F"));
-                System.out.println("Length: " + g.getShortestDistance("A","F"));
+                System.out.println(g.getPath("A", "F"));
+                System.out.println("Length: " + g.getShortestDistance("A", "F"));
+                break;
+            case 9:
+                System.out.println("Shortest Path between adam and peggy");
+                System.out.println(g.getPath("adam", "peggy"));
+                System.out.println("Length: " + g.getShortestDistance("adam", "peggy"));
+                break;
+            case 10:
+                System.out.println("Shortest Path between Jippo and EggsandToast");
+                System.out.println(g.getPath("Jippo", "EggsandToast"));
+                System.out.println("Length: " + g.getShortestDistance("Jippo", "EggsandToast"));
                 break;
         }
     }
@@ -151,15 +159,24 @@ public class Main {
         clone.printEdgesUsingAdjacencies();
     }
 
-    public static void testPostmanPaths(Graph g) {
+    public static void testPostmanPaths(Graph g, int i) {
         System.out.println("\nGETTING POSTMANGRAPH");
         Graph adjustedG = g.getChinesePostmanGraph();
         System.out.println(g.getChinesePostmanCost());
         System.out.println();
-        if (!adjustedG.getVertexNames()[0].equals("A")) {
-            System.out.println(adjustedG.getChinesePostmanRoute("SP"));
+        if (i==1) {
+            System.out.println(adjustedG.getChinesePostmanRoute("A"));
         }
-        else {
+        else if (i > 8) {
+            switch (i) {
+                case 9:
+                    System.out.println(adjustedG.getChinesePostmanRoute("ben"));
+                    break;
+                case 10:
+                    System.out.println(adjustedG.getChinesePostmanRoute("Easy"));
+                    break;
+            }
+        } else {
             System.out.println(adjustedG.getChinesePostmanRoute("B"));
         }
     }
@@ -169,31 +186,32 @@ public class Main {
         System.setOut(out);*/
         System.out.println("On the road!");
         String[] filenames = {"/home/jo/IdeaProjects/Ass4/graphs/graph.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph2.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph3.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph4.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph5.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt",
-                            "/home/jo/IdeaProjects/Ass4/graphs/graph9.txt"};
+                "/home/jo/IdeaProjects/Ass4/graphs/graph2.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph3.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph4.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph5.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph9.txt",
+                "/home/jo/IdeaProjects/Ass4/graphs/graph10.txt"};
 
+        Graph g = new Graph(filenames[0]);
 
-        Graph g = new Graph(filenames[1]);
-        for (int i = 1; i < filenames.length+1; i++) {
+        for (int i = 1; i<2/*i < filenames.length + 1*/; i++) {
             System.out.println("=======NEW SKETCH " + i + "============");
-            g.printAdjacencyM();
-            g.printNextM();
+            //g.printAdjacencyM();
+            //g.printNextM();
             testShortestPath(g, i);
-            testClone(g);
+            //testClone(g);
             theDegree(g);
             oddOrEven(g);
             numberEdges(g);
             deepDive(g);
-            testPostmanPaths(g);
+            testPostmanPaths(g, i);
             //System.out.println(g.getTotalGraphWeight());
             System.out.println("Chinese postman cost: " + g.getChinesePostmanCost());
-            if (i!=filenames.length) {
+            if (i != filenames.length) {
                 g = newConstructions(g, filenames[i], verbose);
             }
         }

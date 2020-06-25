@@ -21,32 +21,13 @@ public class Vertex implements Comparable<Vertex> {
         this.numNeighbours = 0;
     }
 
-/*    public Vertex clone() {
-        //name
-        Vertex temp = new Vertex(this.name);
-        //adjacenciesCount
-        temp.adjacenciesCount = this.adjacenciesCount;
-        //adjacenciesList
-        for (int i = 0; i < this.adjacenciesCount; i++) {
-            Edge e = this.adjacenciesList[i];
-            temp.adjacenciesList[i] = new Edge(e.getStartVertex(), e.getEndVertex(), e.getWeight());
-        }
-        //Vertex startVertex, Vertex endVertex, Integer weight
-
-
-
-        //distance
-
-        //numNeighbours
-    }*/
-
     public void addNeighbour(Edge edge) {
         this.adjacenciesList[numNeighbours++] = edge;
         this.adjacenciesCount++;
     }
 
     public String getName() {
-        return name;
+        return name.strip();
     }
 
     public void setName(String name) {
