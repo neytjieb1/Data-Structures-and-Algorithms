@@ -12,6 +12,32 @@ public class Main {
 
     private static boolean verbose = false;
 
+    public static String[] filenames = {"/home/jo/IdeaProjects/Ass4/graphs/graph.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph2.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph3.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph4.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph5.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph9.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graph10.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graphG1.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graphG2.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graphG3.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graphG4.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/largeGraph.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/odd8.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/starGraph.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/2.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/6odd.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/basic.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/berne.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/complex_task1.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/eulerian.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/geeks.txt",
+            "/home/jo/IdeaProjects/Ass4/graphs/graphAlpha.txt"};
+
     public static void testClone(Graph g) {
         System.out.println("Cloning Graph");
         Graph clone = g.clone();
@@ -74,6 +100,19 @@ public class Main {
         for (int i = 0; i < names.length; i++) {
             System.out.println(names[i] + ": " + g.depthFirstTraversal(names[i]));
         }
+        //Quick Test of changeLabel
+        String[] currNames = {"A", "B", "Z"};
+        String[] newNames = {"a", "b", "f"};
+        for (int i = 0; i < newNames.length; i++) {
+            if (g.changeLabel(currNames[i], newNames[i])) {
+                System.out.println("Success: " + currNames[i] + " " + newNames[i]);
+            } else {
+                System.out.println("Failure for " + currNames[i] + " " + newNames[i]);
+            }
+        }
+        //reset for later tests
+        g.changeLabel("a", "A");
+        g.changeLabel("b", "B");
     }
 
     public static void oddOrEven(Graph g) {
@@ -161,13 +200,15 @@ public class Main {
 
     public static void testPostmanPaths(Graph g, int i) {
         System.out.println("\nGETTING POSTMANGRAPH");
-        Graph adjustedG = g.getChinesePostmanGraph();
         System.out.println(g.getChinesePostmanCost());
+        //System.out.println("Postman Cost before: " + g.getChinesePostmanCost());
+        Graph adjustedG = g.getChinesePostmanGraph();
+        //System.out.println("Postman Cost after: " + g.getChinesePostmanCost());
         System.out.println();
-        if (i==1) {
+        /*if (i==1) {
             System.out.println(adjustedG.getChinesePostmanRoute("A"));
         }
-        else if (i > 8) {
+        else*/ if (i > 8) {
             switch (i) {
                 case 9:
                     System.out.println(adjustedG.getChinesePostmanRoute("ben"));
@@ -182,33 +223,23 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        /*PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/Ass4/graphs/outputB.txt"));
-        System.setOut(out);*/
+        PrintStream out = new PrintStream(new FileOutputStream("/home/jo/IdeaProjects/A4_Test/src/outputB.txt"));
+        System.setOut(out);
         System.out.println("On the road!");
-        String[] filenames = {"/home/jo/IdeaProjects/Ass4/graphs/graph.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph2.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph3.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph4.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph5.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph6.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph7.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph8.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph9.txt",
-                "/home/jo/IdeaProjects/Ass4/graphs/graph10.txt"};
 
         Graph g = new Graph(filenames[0]);
 
-        for (int i = 1; i<2/*i < filenames.length + 1*/; i++) {
+        for (int i = 1; i < filenames.length + 1; i++) {
             System.out.println("=======NEW SKETCH " + i + "============");
             //g.printAdjacencyM();
             //g.printNextM();
-            testShortestPath(g, i);
+            //testShortestPath(g, i);
             //testClone(g);
-            theDegree(g);
-            oddOrEven(g);
-            numberEdges(g);
-            deepDive(g);
+            //theDegree(g);
+            //oddOrEven(g);
+            //numberEdges(g);
             testPostmanPaths(g, i);
+            deepDive(g);
             //System.out.println(g.getTotalGraphWeight());
             System.out.println("Chinese postman cost: " + g.getChinesePostmanCost());
             if (i != filenames.length) {

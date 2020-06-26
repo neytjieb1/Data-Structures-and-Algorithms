@@ -158,7 +158,9 @@ public class Graph {
         int numE = this.numE;
         Vertex[] vList = new Vertex[verticesList.length];
         String[] vNames = new String[vertexNames.length];
-        Edge[] eList = new Edge[this.edgeList.length];
+        int size = this.edgeList.length;
+        Edge[] eList = new Edge[this.numE*(this.numE+1)];
+        size = eList.length;
         Matrix adj = null;
         int finWeightClone = this.finalPostmanWeight;
 
@@ -212,7 +214,7 @@ public class Graph {
         //initialise good ones to null
         this.verticesList = new Vertex[this.numV]; //overwrites
         this.vertexNames = new String[this.numV];
-        this.edgeList = new Edge[(numE * (numE - 1)) / 2];
+        this.edgeList = new Edge[(this.numE * (this.numE + 1)) / 2];
 
         constructGraph(lines);
         this.adjacency = new Matrix(numV, numE, verticesList);
@@ -246,7 +248,7 @@ public class Graph {
             Edge[] adjList = vertexV.getAdjacenciesList();
             for (int i = 0; i < vertexV.getAdjacenciesCount(); i++) {
                 Edge e = adjList[i];
-                if (e != null && e.getEndVertex().getName().equals(v)) {
+                if (e != null && e.getEndVertex().getName().equals(u)) {
                     numDirectE++;
                 }
             }
@@ -309,8 +311,13 @@ public class Graph {
             Vertex changeFace = this.verticesList[i];
             changeFace.setName(newLabel);
             this.vertexNames[i] = newLabel;
+            reAlphabetiseVertices();
             return true;
         }
+    }
+
+    public void reAlphabetiseVertices() {
+        insertionSort(this.vertexNames);
     }
 
     /**
@@ -329,6 +336,9 @@ public class Graph {
 
         //first traverse according to v and then
         String out = "";
+        if (contains(v,vertexNames)==-1) {
+            return "";
+        }
         out += DFS(this.verticesList[contains(v, vertexNames)], out);
         //traverse according to rest
         int i;
@@ -365,10 +375,20 @@ public class Graph {
         String[] sortedNames = vNames;
         for (int i = 1, j; i < sortedNames.length; i++) {
             String temp = sortedNames[i];
+            Vertex tempV=null;
+            if (this.verticesList[i]!=null) {
+                tempV = this.verticesList[i];
+            }
             for (j = i; j > 0 && temp.compareTo(sortedNames[j - 1]) < 0; j--) {
                 sortedNames[j] = sortedNames[j - 1];
+                if (tempV!=null) {
+                    this.verticesList[j] = this.verticesList[j-1];
+                }
             }
             sortedNames[j] = temp;
+            if (tempV!=null) {
+                this.verticesList[j] = tempV;
+            }
         }
         //find Max
         int max = sortedNames[0].length();
@@ -378,9 +398,12 @@ public class Graph {
         //add spaces to the rest
         for (int i = 0; i < sortedNames.length; i++) {
             if (sortedNames[i].length()< max) {
-                for (int j = sortedNames[i].length(); j < max; j++) {
+                while (sortedNames[i].length() < max) {
                     sortedNames[i] = sortedNames[i] + " ";
                 }
+/*                (int j = sortedNames[i].length(); j < max; j++) {
+                    sortedNames[i] = sortedNames[i] + " ";
+                }*/
             }
         }
         return sortedNames;
@@ -432,6 +455,7 @@ public class Graph {
         //no need to check if not present
         Vertex temp = this.adjacency.next[start][end];
         if (temp == null) temp = this.adjacency.next[end][start];
+        if (temp == null) return "";
         out += "," + temp.getName();
 
         while (!temp.getName().equals(v.strip())) {
@@ -457,7 +481,8 @@ public class Graph {
      */
     public int getChinesePostmanCost() {
         if (this.finalPostmanWeight.equals(Integer.MIN_VALUE)) {
-            this.finalPostmanWeight = this.getTotalGraphWeight();
+            Graph temp = this.getChinesePostmanGraph();
+            this.finalPostmanWeight = temp.getChinesePostmanCost();
         }
         return this.finalPostmanWeight;
     }
@@ -471,13 +496,19 @@ public class Graph {
         String[] oddEdges = getOdd().split(",");
         //String oddE = String.join("", oddEdges);
         if (oddEdges[0].equals("")) {
-            return this.clone();
+            this.finalPostmanWeight = this.getTotalGraphWeight();
+            Graph temp = this.clone();
+            temp.finalPostmanWeight = temp.getTotalGraphWeight();
+            return temp;
         } else {
             Graph clone = this.clone();
             //get total weight (since I've constructed digraph with two directions every time)
             this.finalPostmanWeight = getTotalGraphWeight();
             //create array of pairings
             int n_P_n = factorial(oddEdges.length);
+            if (n_P_n > 10000) {
+                n_P_n = (int) Math.pow(2.0,10.0);
+            }
             String[][] weightsAndPairings = new String[n_P_n * n_P_n][oddEdges.length / 2 + 1];
             int minIndex = pairUpVertices(weightsAndPairings, oddEdges);
             String[] addEdges = weightsAndPairings[minIndex];
@@ -490,15 +521,15 @@ public class Graph {
                     Integer weight = findEdgeWeight(start, end);
                     clone.edgeList[clone.numE] = new Edge(start, end, weight);
                     start.addNeighbour(clone.edgeList[clone.numE++]);
-                    System.out.println("adding " + start.getName() + "-" + end.getName());
+                    //System.out.println("adding " + start.getName() + "-" + end.getName());
                 }
             }
             //recalculate adjacency matrix ?
-            System.out.println("Start weight= " + finalPostmanWeight);
-            System.out.println("Add weight = " + Integer.valueOf(Integer.valueOf(weightsAndPairings[minIndex][oddEdges.length / 2])));
+            //System.out.println("Start weight= " + finalPostmanWeight);
+            //System.out.println("Add weight = " + Integer.valueOf(Integer.valueOf(weightsAndPairings[minIndex][oddEdges.length / 2])));
             this.finalPostmanWeight += Integer.valueOf(Integer.valueOf(weightsAndPairings[minIndex][oddEdges.length / 2]));
             clone.finalPostmanWeight = this.finalPostmanWeight;
-            System.out.println("New weight: " + clone.finalPostmanWeight);
+            //System.out.println("New weight: " + clone.finalPostmanWeight);
             clone.adjacency = new Matrix(clone.numV, clone.numE, clone.verticesList);
             return clone;
         }
@@ -524,6 +555,7 @@ public class Graph {
 
     private int pairUpVertices(String[][] weightsAndPairings, String[] oddEdges) {
         int len = this.vertexNames[0].length();
+        this.count = 0;
         permute(weightsAndPairings, String.join("", oddEdges), "");
         int minWeightIndex = 0;
         for (int i = 0; i < count; i++) {
@@ -712,6 +744,18 @@ public class Graph {
             strippedNames[i] = this.vertexNames[i].strip();
         }
         return strippedNames;
+    }
+
+    public Edge[] getEdges() {
+        return this.edgeList;
+    }
+
+    public Integer getEdgeWeights(int i, int j) {
+        Edge e = findEdgeBetween(this.vertexNames[i], this.vertexNames[i], false);
+        if (e!=null) {
+            return e.getWeight();
+        }
+        else return null;
     }
 
 }
